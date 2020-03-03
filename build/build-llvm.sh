@@ -29,11 +29,11 @@ git clone --depth 1 --single-branch -b "${TAG}" https://github.com/llvm/llvm-pro
 # Setup build directory and build configuration
 mkdir build
 cd build
-cmake -G "Unix Makefiles" ../llvm-project/llvm \
+cmake -G "Ninja" ../llvm-project/llvm \
     -DCMAKE_INSTALL_PREFIX:PATH=/root/staging
 
 # Build and install artifacts
-make -j$(nproc) install-llvm-headers
+ninja install-llvm-headers
 
 export XZ_DEFAULTS="-T 0"
 tar Jcf ${OUTPUT} --transform "s,^./,./llvm-${VERSION}/," -C ${STAGING_DIR} .

@@ -30,13 +30,13 @@ git clone https://github.com/ThePhD/llvm-project.git -b feature/embed
 
 mkdir build
 cd build
-cmake -G "Unix Makefiles" ../llvm-project/llvm \
+cmake -G "Ninja" ../llvm-project/llvm \
     -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi" \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH=/root/staging \
     -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include
 
-make -j$(nproc) install
+ninja install
 
 export XZ_DEFAULTS="-T 0"
 tar Jcf ${OUTPUT} --transform "s,^./,./clang-${VERSION}/," -C ${STAGING_DIR} .
