@@ -1,15 +1,16 @@
 #!/bin/bash
 
-set -e
+set -ex
 
-# Grab CE's GCC 7.3.0 for its binutils (which is what the site uses to link currently)
+# Grab CE's GCC for its binutils
+BINUTILS_GCC_VERSION=9.2.0
 mkdir -p /opt/compiler-explorer
 pushd /opt/compiler-explorer
-curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-7.3.0.tar.xz | tar Jxf -
+curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
 popd
 
 ROOT=$(pwd)
-TAG=trunk
+TAG=experiments
 VERSION=autonsdmi-trunk-$(date +%Y%m%d)
 
 OUTPUT=/root/clang-${VERSION}.tar.xz
@@ -24,24 +25,23 @@ STAGING_DIR=$(pwd)/staging
 rm -rf ${STAGING_DIR}
 mkdir -p ${STAGING_DIR}
 
-git clone https://github.com/llvm-mirror/llvm
-pushd llvm/tools
-git clone --depth 1 --single-branch -b absolutely_always_auto https://github.com/cor3ntin/clang
-source ./clang/compiler-explorer-llvm-commit.sh
-popd
-pushd llvm/projects
-git clone --depth 1 --single-branch -b master https://github.com/llvm-mirror/libcxx
-git clone --depth 1 --single-branch -b master https://github.com/llvm-mirror/libcxxabi
-popd
 
+# Setup llvm-project checkout
+git clone --depth 1 --single-branch -b "${TAG}" https://github.com/cor3ntin/llvm-project
+
+# Setup build directory and build configuration
 mkdir build
 cd build
-cmake -G "Unix Makefiles" ../llvm \
+cmake -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;" -G "Unix Makefiles" ../llvm-project/llvm \
     -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DLLVM_OPTIMIZED_TABLEGEN=ON
     -DCMAKE_INSTALL_PREFIX:PATH=/root/staging \
-    -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-7.3.0/lib/gcc/x86_64-linux-gnu/7.3.0/plugin/include/
+    -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include
 
+# Build and install artifacts
 make -j$(nproc) install
+
+# Don't try to compress the binaries as they don't like it
 
 export XZ_DEFAULTS="-T 0"
 tar Jcf ${OUTPUT} --transform "s,^./,./clang-${VERSION}/," -C ${STAGING_DIR} .
