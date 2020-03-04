@@ -16,6 +16,7 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     libc6-dev-i386 \
     linux-libc-dev \
     make \
+    ninja-build \
     patch \
     python \
     s3cmd \
