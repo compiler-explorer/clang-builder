@@ -33,12 +33,12 @@ source ./install_parmexpr_src.sh
 
 mkdir build
 cd build
-cmake -G "Unix Makefiles" ../llvm \
+cmake -G "Ninja" ../llvm \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH=/root/staging \
     -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-7.3.0/lib/gcc/x86_64-linux-gnu/7.3.0/plugin/include/
 
-make -j$(nproc) install
+ninja install
 
 export XZ_DEFAULTS="-T 0"
 tar Jcf ${OUTPUT} --transform "s,^./,./clang-${VERSION}/," -C ${STAGING_DIR} .

@@ -34,14 +34,14 @@ git clone --depth 20 --single-branch -b trivially-relocatable https://github.com
 # Setup build directory and build configuration
 mkdir build
 cd build
-cmake -G "Unix Makefiles" ../llvm-project/llvm \
+cmake -G "Ninja" ../llvm-project/llvm \
     -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;compiler-rt;lld;polly;clang-tools-extra" \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH=/root/staging \
     -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include
 
 # Build and install artifacts
-make -j$(nproc) install
+ninja install
 
 # Don't try to compress the binaries as they don't like it
 

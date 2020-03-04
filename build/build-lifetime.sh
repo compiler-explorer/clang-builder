@@ -28,13 +28,13 @@ git clone --depth 1 --single-branch -b lifetime https://github.com/mgehre/llvm-p
 
 mkdir build
 cd build
-cmake -G "Unix Makefiles" ../llvm-project/llvm \
+cmake -G "Ninja" ../llvm-project/llvm \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DLLVM_ENABLE_PROJECTS=clang \
     -DCMAKE_INSTALL_PREFIX:PATH=/root/staging \
     -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-7.3.0/lib/gcc/x86_64-linux-gnu/7.3.0/plugin/include/
 
-make -j$(nproc) install
+ninja install
 
 export XZ_DEFAULTS="-T 0"
 tar Jcf ${OUTPUT} --transform "s,^./,./clang-${VERSION}/," -C ${STAGING_DIR} .
