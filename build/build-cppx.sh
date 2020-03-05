@@ -2,10 +2,11 @@
 
 set -e
 
-# Grab CE's GCC 8.2.0 for its binutils
+# Grab CE's GCC for its binutils
+BINUTILS_GCC_VERSION=9.2.0
 mkdir -p /opt/compiler-explorer
 pushd /opt/compiler-explorer
-curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-8.2.0.tar.xz | tar Jxf -
+curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
 popd
 
 ROOT=$(pwd)
@@ -33,7 +34,7 @@ cd build
 cmake -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi" -G "Ninja" ../llvm-project/llvm \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH=/root/staging \
-    -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-8.2.0/lib/gcc/x86_64-linux-gnu/8.2.0/plugin/include/
+    -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include/
 
 # Build and install artifacts
 ninja install
