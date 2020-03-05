@@ -2,10 +2,11 @@
 
 set -e
 
-# Grab CE's GCC 7.3.0 for its binutils (which is what the site uses to link currently)
+# Grab CE's GCC for its binutils
+BINUTILS_GCC_VERSION=9.2.0
 mkdir -p /opt/compiler-explorer
 pushd /opt/compiler-explorer
-curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-7.3.0.tar.xz | tar Jxf -
+curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
 popd
 
 ROOT=$(pwd)
