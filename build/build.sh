@@ -3,7 +3,7 @@
 set -ex
 
 # Grab CE's GCC for its binutils
-BINUTILS_GCC_VERSION=9.2.0
+BINUTILS_GCC_VERSION=9.3.0
 mkdir -p /opt/compiler-explorer
 pushd /opt/compiler-explorer
 curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
