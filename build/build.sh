@@ -36,7 +36,7 @@ git clone --depth 1 --single-branch -b "${TAG}" https://github.com/llvm/llvm-pro
 # Setup build directory and build configuration
 mkdir build
 cd build
-cmake -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;compiler-rt;lld;polly;clang-tools-extra" -G "Ninja" ../llvm-project/llvm \
+cmake -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;compiler-rt;lld;polly;clang-tools-extra;openmp" -G "Ninja" ../llvm-project/llvm \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH=/root/staging \
     -DLLVM_BINUTILS_INCDIR:PATH=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include \
