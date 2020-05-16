@@ -6,12 +6,7 @@ URL="https://github.com/ThePhD/llvm-project.git"
 BRANCH="feature/embed"
 BINUTILS_GCC_VERSION=9.2.0
 
-if [[ "${BINUTILS_GCC_VERSION}" == "trunk" ]]; then
-  BINUTILS_REVISION="$(git ls-remote --heads ${BINUTILS_GITURL} refs/heads/master | cut -f 1)"
-else
-  BINUTILS_REVISION="${BINUTILS_GCC_VERSION}"
-fi
-
+BINUTILS_REVISION="${BINUTILS_GCC_VERSION}"
 CLANG_REVISION=$(git ls-remote --heads ${URL} refs/heads/${BRANCH} | cut -f 1)
 REVISION="clang-${CLANG_REVISION}-binutils-${BINUTILS_REVISION}"
 LAST_REVISION="${3}"
