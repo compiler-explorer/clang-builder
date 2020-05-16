@@ -2,8 +2,28 @@
 
 set -e
 
-# Grab CE's GCC for its binutils
+URL="https://github.com/ThePhD/llvm-project.git"
+BRANCH="feature/embed"
 BINUTILS_GCC_VERSION=9.2.0
+
+if [[ "${BINUTILS_GCC_VERSION}" == "trunk" ]]; then
+  BINUTILS_REVISION="$(git ls-remote --heads ${BINUTILS_GITURL} refs/heads/master | cut -f 1)"
+else
+  BINUTILS_REVISION="${BINUTILS_GCC_VERSION}"
+fi
+
+CLANG_REVISION=$(git ls-remote --heads ${URL} refs/heads/${BRANCH} | cut -f 1)
+REVISION="clang-${CLANG_REVISION}-binutils-${BINUTILS_REVISION}"
+LAST_REVISION="${3}"
+
+echo "ce-build-revision:${REVISION}"
+
+if [[ "${REVISION}" == "${LAST_REVISION}" ]]; then
+  echo "ce-build-status:SKIPPED"
+  exit
+fi
+
+# Grab CE's GCC for its binutils
 mkdir -p /opt/compiler-explorer
 pushd /opt/compiler-explorer
 curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
@@ -25,7 +45,7 @@ STAGING_DIR=$(pwd)/staging
 rm -rf ${STAGING_DIR}
 mkdir -p ${STAGING_DIR}
 
-git clone https://github.com/ThePhD/llvm-project.git -b feature/embed
+git clone ${URL} -b ${BRANCH}
 
 
 mkdir build
