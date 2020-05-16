@@ -2,12 +2,11 @@
 
 set -ex
 
+URL="https://github.com/llvm/llvm-project.git"
+
 # Grab CE's GCC for its binutils
 BINUTILS_GCC_VERSION=9.2.0
-mkdir -p /opt/compiler-explorer
-pushd /opt/compiler-explorer
-curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
-popd
+BINUTILS_REVISION="${BINUTILS_GCC_VERSION}"
 
 ROOT=$(pwd)
 VERSION=$1
@@ -17,6 +16,22 @@ if echo ${VERSION} | grep 'trunk'; then
 else
     TAG=llvmorg-${VERSION}
 fi
+
+CLANG_REVISION=$(git ls-remote --heads ${URL} refs/heads/${TAG} | cut -f 1)
+REVISION="clang-${CLANG_REVISION}-binutils-${BINUTILS_REVISION}"
+LAST_REVISION="${3}"
+
+echo "ce-build-revision:${REVISION}"
+
+if [[ "${REVISION}" == "${LAST_REVISION}" ]]; then
+  echo "ce-build-status:SKIPPED"
+  exit
+fi
+
+mkdir -p /opt/compiler-explorer
+pushd /opt/compiler-explorer
+curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
+popd
 
 OUTPUT=/root/clang-${VERSION}.tar.xz
 S3OUTPUT=""
@@ -31,7 +46,7 @@ rm -rf ${STAGING_DIR}
 mkdir -p ${STAGING_DIR}
 
 # Setup llvm-project checkout
-git clone --depth 1 --single-branch -b "${TAG}" https://github.com/llvm/llvm-project.git
+git clone --depth 1 --single-branch -b "${TAG}" ${URL}
 
 # Setup build directory and build configuration
 mkdir build
