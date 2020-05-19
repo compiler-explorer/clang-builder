@@ -9,6 +9,8 @@ BINUTILS_GCC_VERSION=9.2.0
 CMAKE_EXTRA_ARGS=
 LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
+BASENAME=clang
+NINJA_TARGET=install
 
 case $VERSION in
 autonsdmi-trunk)
@@ -38,7 +40,20 @@ relocatable-trunk)
     URL=https://github.com/Quuxplusone/llvm-project.git
     VERSION=relocatable-trunk-$(date +%Y%m%d)
     ;;
-trunk|*)
+llvm-*)
+    BASENAME=llvm
+    NINJA_TARGET=install-llvm-headers
+    # strip prefix from front of version
+    VERSION=${VERSION#llvm-}
+    if [[ "${VERSION}" == "trunk" ]]; then
+        BRANCH=master
+        VERSION=trunk-$(date +%Y%m%d)
+    else
+        TAG=llvmorg-${VERSION}
+    fi
+    URL=https://github.com/llvm/llvm-project.git
+    ;;
+*)
     if [[ "${VERSION}" == "trunk" ]]; then
         BRANCH=master
         VERSION=trunk-$(date +%Y%m%d)
@@ -79,13 +94,14 @@ pushd /opt/compiler-explorer
 curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
 popd
 
-OUTPUT=${ROOT}/clang-${VERSION}.tar.xz
+FULLNAME=${BASENAME}-${VERSION}
+OUTPUT=${ROOT}/${FULLNAME}.tar.xz
 S3OUTPUT=
 if [[ $2 =~ ^s3:// ]]; then
     S3OUTPUT=$2
 else
     if [[ -d "${2}" ]]; then
-        OUTPUT=$2/clang-${VERSION}.tar.xz
+        OUTPUT=$2/${FULLNAME}.tar.xz
     else
         OUTPUT=${2-$OUTPUT}
     fi
@@ -113,12 +129,12 @@ cmake \
     ${CMAKE_EXTRA_ARGS}
 
 # Build and install artifacts
-ninja install
+ninja ${NINJA_TARGET}
 
 # Don't try to compress the binaries as they don't like it
 
 export XZ_DEFAULTS="-T 0"
-tar Jcf ${OUTPUT} --transform "s,^./,./clang-${VERSION}/," -C ${STAGING_DIR} .
+tar Jcf ${OUTPUT} --transform "s,^./,./${FULLNAME}/," -C ${STAGING_DIR} .
 
 if [[ ! -z "${S3OUTPUT}" ]]; then
     s3cmd put --rr ${OUTPUT} ${S3OUTPUT}
