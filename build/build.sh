@@ -6,13 +6,11 @@ ROOT=$PWD
 VERSION=$1
 
 BINUTILS_GCC_VERSION=9.2.0
-CMAKE_EXTRA_ARGS=
+CMAKE_EXTRA_ARGS="-DCMAKE_CXX_COMPILER=/usr/bin/g++-8"
 LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
 BASENAME=clang
 NINJA_TARGET=install
-CXX=/usr/bin/g++-8
-CC=/usr/bin/gcc-8
 
 case $VERSION in
 autonsdmi-trunk)
