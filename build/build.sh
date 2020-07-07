@@ -11,6 +11,7 @@ LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
 BASENAME=clang
 NINJA_TARGET=install
+CXXFLAGS=-v -save-temps
 
 case $VERSION in
 autonsdmi-trunk)
