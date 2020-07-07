@@ -35,6 +35,12 @@ lifetime-trunk)
     VERSION=lifetime-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_PROJECTS="clang"
     ;;
+llvmflang-trunk)
+    BRANCH=master
+    URL=https://github.com/llvm/llvm-project.git
+    VERSION=llvmflang-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_PROJECTS="clang;mlir;flang"
+    ;;
 relocatable-trunk)
     BRANCH=trivially-relocatable
     URL=https://github.com/Quuxplusone/llvm-project.git
