@@ -10,8 +10,8 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     curl \
     file \
     flex \
-    g++ \
-    gcc \
+    g++-8 \
+    gcc-8 \
     git \
     libc6-dev-i386 \
     linux-libc-dev \
