@@ -11,7 +11,7 @@ LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
 BASENAME=clang
 NINJA_TARGET=install
-CXXFLAGS=-v -save-temps
+EXTRACXXFLAGS=-v -save-temps
 
 case $VERSION in
 autonsdmi-trunk)
@@ -129,6 +129,7 @@ cd "${ROOT}/build"
 cmake \
     -G "Ninja" "${ROOT}/llvm-project/llvm" \
     -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
+    -DCMAKE_CXX_FLAGS="${EXTRACXXFLAGS}" \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH="${STAGING_DIR}" \
     -DLLVM_BINUTILS_INCDIR:PATH="/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include" \
