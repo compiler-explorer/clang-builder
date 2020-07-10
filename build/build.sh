@@ -21,7 +21,7 @@ autonsdmi-trunk)
     ;;
 cppx-trunk)
     BRANCH=compiler-explorer
-    URL=https://gitlab.com/lock3/clang.git
+    URL=https://github.com/lock3/meta.git
     VERSION=cppx-trunk-$(date +%Y%m%d)
     ;;
 embed-trunk)
