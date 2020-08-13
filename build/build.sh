@@ -24,6 +24,11 @@ cppx-trunk)
     URL=https://github.com/lock3/meta.git
     VERSION=cppx-trunk-$(date +%Y%m%d)
     ;;
+cppx-gold-trunk)
+    BRANCH=compiler-explorer
+    URL=https://github.com/lock3/cppx.git
+    VERSION=cppx-gold-trunk-$(date +%Y%m%d)
+    ;;
 embed-trunk)
     BRANCH=feature/embed
     URL=https://github.com/ThePhD/llvm-project.git
