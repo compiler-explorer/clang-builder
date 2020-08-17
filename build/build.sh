@@ -24,10 +24,10 @@ cppx-trunk)
     URL=https://github.com/lock3/meta.git
     VERSION=cppx-trunk-$(date +%Y%m%d)
     ;;
-cppx-gold-trunk)
-    BRANCH=compiler-explorer
+cppx-ext-trunk)
+    BRANCH=cppx
     URL=https://github.com/lock3/cppx.git
-    VERSION=cppx-gold-trunk-$(date +%Y%m%d)
+    VERSION=cppx-ext-trunk-$(date +%Y%m%d)
     ;;
 embed-trunk)
     BRANCH=feature/embed
