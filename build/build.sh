@@ -52,6 +52,11 @@ relocatable-trunk)
     URL=https://github.com/Quuxplusone/llvm-project.git
     VERSION=relocatable-trunk-$(date +%Y%m%d)
     ;;
+patmat-trunk)
+    BRANCH=patmat
+    URL=https://github.com/dansarginson/llvm-project.git
+    VERSION=patmat-trunk-$(date +%Y%m%d)
+    ;;
 llvm-*)
     BASENAME=llvm
     NINJA_TARGET=install-llvm-headers
