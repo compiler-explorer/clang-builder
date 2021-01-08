@@ -41,7 +41,7 @@ lifetime-trunk)
     LLVM_ENABLE_PROJECTS="clang"
     ;;
 llvmflang-trunk)
-    BRANCH=master
+    BRANCH=main
     URL=https://github.com/llvm/llvm-project.git
     VERSION=llvmflang-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_PROJECTS="mlir;flang"
@@ -63,7 +63,7 @@ llvm-*)
     # strip prefix from front of version
     VERSION=${VERSION#llvm-}
     if [[ "${VERSION}" == "trunk" ]]; then
-        BRANCH=master
+        BRANCH=main
         VERSION=trunk-$(date +%Y%m%d)
     else
         TAG=llvmorg-${VERSION}
@@ -72,7 +72,7 @@ llvm-*)
     ;;
 *)
     if [[ "${VERSION}" == "trunk" ]]; then
-        BRANCH=master
+        BRANCH=main
         VERSION=trunk-$(date +%Y%m%d)
     else
         TAG=llvmorg-${VERSION}
