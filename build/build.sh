@@ -53,8 +53,8 @@ relocatable-trunk)
     VERSION=relocatable-trunk-$(date +%Y%m%d)
     ;;
 patmat-trunk)
-    BRANCH=patmat
-    URL=https://github.com/dansarginson/llvm-project.git
+    BRANCH=llvmorg-master-pattern-matching
+    URL=https://github.com/bcardosolopes/llvm-project.git
     VERSION=patmat-trunk-$(date +%Y%m%d)
     ;;
 llvm-*)
