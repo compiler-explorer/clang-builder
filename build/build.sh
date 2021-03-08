@@ -24,6 +24,11 @@ cppx-trunk)
     URL=https://github.com/lock3/meta.git
     VERSION=cppx-trunk-$(date +%Y%m%d)
     ;;
+cppx-p2320-trunk)
+    BRANCH=paper/p2320
+    URL=https://github.com/lock3/meta.git
+    VERSION=cppx-p2320-trunk-$(date +%Y%m%d)
+    ;;
 cppx-ext-trunk)
     BRANCH=cppx
     URL=https://github.com/lock3/cppx.git
