@@ -76,12 +76,20 @@ llvm-*)
     URL=https://github.com/llvm/llvm-project.git
     ;;
 *)
-    if [[ "${VERSION}" == "trunk" ]]; then
+    case $VERSION in
+    trunk)
         BRANCH=main
         VERSION=trunk-$(date +%Y%m%d)
-    else
+        ;;
+    assertions-trunk)
+        BRANCH=main
+        VERSION=assertions-trunk-$(date +%Y%m%d)
+        CMAKE_EXTRA_ARGS=-DLLVM_ENABLE_ASSERTIONS=ON
+        ;;
+    *)
         TAG=llvmorg-${VERSION}
-    fi
+        ;;
+    esac
     URL=https://github.com/llvm/llvm-project.git
     LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;compiler-rt;lld;polly;clang-tools-extra;openmp"
     LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="RISCV;WebAssembly"
