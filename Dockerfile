@@ -19,12 +19,18 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     ninja-build \
     patch \
     python \
-    s3cmd \
     subversion \
     texinfo \
+    unzip \
     wget \
     xz-utils \
-    zlib1g-dev
+    zlib1g-dev && \
+    cd /tmp && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf aws*
+
 
 RUN mkdir -p /root
 COPY build /root/
