@@ -8,7 +8,6 @@ VERSION=$1
 BINUTILS_GCC_VERSION=9.2.0
 CMAKE_EXTRA_ARGS=
 LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi"
-LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
 BASENAME=clang
 NINJA_TARGET=install
 
@@ -92,7 +91,6 @@ llvm-*)
     esac
     URL=https://github.com/llvm/llvm-project.git
     LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;compiler-rt;lld;polly;clang-tools-extra;openmp"
-    LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="RISCV;WebAssembly"
     ;;
 esac
 
@@ -155,7 +153,6 @@ cmake \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH="${STAGING_DIR}" \
     -DLLVM_BINUTILS_INCDIR:PATH="/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include" \
-    -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${LLVM_EXPERIMENTAL_TARGETS_TO_BUILD}" \
     ${CMAKE_EXTRA_ARGS}
 
 # Build and install artifacts
