@@ -107,7 +107,7 @@ BRANCH=${BRANCH-$TAG}
 # some builds checkout a tag instead of a branch
 # these builds have a different prefix for ls-remote
 REF=refs/heads/${BRANCH}
-if [[ ! -z "${TAG}" ]]; then
+if [[ -n "${TAG}" ]]; then
     REF=refs/tags/${TAG}
 fi
 
@@ -119,8 +119,8 @@ LAST_REVISION="${3}"
 echo "ce-build-revision:${REVISION}"
 
 if [[ "${REVISION}" == "${LAST_REVISION}" ]]; then
-  echo "ce-build-status:SKIPPED"
-  exit
+    echo "ce-build-status:SKIPPED"
+    exit
 fi
 
 # Grab CE's GCC for its binutils
@@ -146,14 +146,13 @@ BUILD_DIR=${ROOT}/build
 STAGING_DIR=${ROOT}/staging
 rm -rf "${STAGING_DIR}"
 mkdir -p "${STAGING_DIR}"
-mkdir -p "${ROOT}/build"
 
 # Setup llvm-project checkout
 git clone --depth 1 --single-branch -b "${BRANCH}" "${URL}" "${ROOT}/llvm-project"
 
-#For older LLVM versions, merge runtime and projects
-#August 2021 is when bootstrapping become necessary, bootstraping might have been supported previously a few years prior
-COMMIT_DATE=$(cd ${ROOT}/llvm-project/llvm && git show -s --format=%ct HEAD);
+# For older LLVM versions, merge runtime and projects
+# August 2021 is when bootstrapping become necessary, bootstrapping might have been supported previously a few years prior
+COMMIT_DATE=$(cd "${ROOT}/llvm-project/llvm" && git show -s --format=%ct HEAD)
 TIMESTAMP_BOOTSTRAP_NECESSARY=1627776000
 if ((COMMIT_DATE < TIMESTAMP_BOOTSTRAP_NECESSARY)); then
     LLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS};${LLVM_ENABLE_RUNTIMES}"
@@ -162,8 +161,8 @@ if ((COMMIT_DATE < TIMESTAMP_BOOTSTRAP_NECESSARY)); then
 fi
 
 # Setup build directory and build configuration
-mkdir -p "${ROOT}/build"
-cd "${ROOT}/build"
+mkdir -p "${BUILD_DIR}"
+cd "${BUILD_DIR}"
 cmake \
     -G "Ninja" "${ROOT}/llvm-project/llvm" \
     -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
@@ -176,15 +175,15 @@ cmake \
 
 # Build and install artifacts
 ninja ${NINJA_TARGET}
-if [[ ! -z "${NINJA_TARGET_RUNTIMES}" ]]; then
-    ninja ${NINJA_TARGET_RUNTIMES}
+if [[ -n "${NINJA_TARGET_RUNTIMES}" ]]; then
+    ninja "${NINJA_TARGET_RUNTIMES}"
 fi
 
 # Don't try to compress the binaries as they don't like it
 
 export XZ_DEFAULTS="-T 0"
-tar Jcf ${OUTPUT} --transform "s,^./,./${FULLNAME}/," -C ${STAGING_DIR} .
+tar Jcf "${OUTPUT}" --transform "s,^./,./${FULLNAME}/," -C "${STAGING_DIR}" .
 
-if [[ ! -z "${S3OUTPUT}" ]]; then
+if [[ -n "${S3OUTPUT}" ]]; then
     aws s3 cp --storage-class REDUCED_REDUNDANCY "${OUTPUT}" "${S3OUTPUT}"
 fi
