@@ -18,6 +18,7 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     ninja-build \
     patch \
     python \
+    python3 \
     subversion \
     texinfo \
     unzip \
