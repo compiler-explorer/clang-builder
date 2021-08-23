@@ -7,10 +7,12 @@ VERSION=$1
 
 BINUTILS_GCC_VERSION=9.2.0
 CMAKE_EXTRA_ARGS=
-LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi"
+LLVM_ENABLE_PROJECTS="clang;"
+LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
 BASENAME=clang
 NINJA_TARGET=install
+NINJA_TARGET_RUNTIMES=install-runtimes
 
 case $VERSION in
 autonsdmi-trunk)
@@ -43,13 +45,14 @@ lifetime-trunk)
     BRANCH=lifetime
     URL=https://github.com/mgehre/llvm-project.git
     VERSION=lifetime-trunk-$(date +%Y%m%d)
-    LLVM_ENABLE_PROJECTS="clang"
+    LLVM_ENABLE_RUNTIMES=""
     ;;
 llvmflang-trunk)
     BRANCH=main
     URL=https://github.com/llvm/llvm-project.git
     VERSION=llvmflang-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_PROJECTS="mlir;flang"
+    LLVM_ENABLE_RUNTIMES=""
     CMAKE_EXTRA_ARGS=-DCMAKE_CXX_STANDARD=17
     ;;
 relocatable-trunk)
@@ -65,6 +68,7 @@ patmat-trunk)
 llvm-*)
     BASENAME=llvm
     NINJA_TARGET=install-llvm-headers
+    NINJA_TARGET_RUNTIMES=
     # strip prefix from front of version
     VERSION=${VERSION#llvm-}
     if [[ "${VERSION}" == "trunk" ]]; then
@@ -91,7 +95,8 @@ llvm-*)
         ;;
     esac
     URL=https://github.com/llvm/llvm-project.git
-    LLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;compiler-rt;lld;polly;clang-tools-extra;openmp"
+    LLVM_ENABLE_PROJECTS="clang;compiler-rt;lld;polly;clang-tools-extra;openmp"
+    LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"
     LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="RISCV;WebAssembly"
     ;;
 esac
@@ -146,12 +151,23 @@ mkdir -p "${ROOT}/build"
 # Setup llvm-project checkout
 git clone --depth 1 --single-branch -b "${BRANCH}" "${URL}" "${ROOT}/llvm-project"
 
+#For older LLVM versions, merge runtime and projects
+#August 2021 is when bootstrapping become necessary, bootstraping might have been supported previously a few years prior
+COMMIT_DATE=$(cd ${ROOT}/llvm-project/llvm && git show -s --format=%ct HEAD);
+TIMESTAMP_BOOTSTRAP_NECESSARY=1627776000
+if ((COMMIT_DATE < TIMESTAMP_BOOTSTRAP_NECESSARY)); then
+    LLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS};${LLVM_ENABLE_RUNTIMES}"
+    LLVM_ENABLE_RUNTIMES=
+    NINJA_TARGET_RUNTIMES=
+fi
+
 # Setup build directory and build configuration
 mkdir -p "${ROOT}/build"
 cd "${ROOT}/build"
 cmake \
     -G "Ninja" "${ROOT}/llvm-project/llvm" \
     -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
+    -DLLVM_ENABLE_RUNTIMES="${LLVM_ENABLE_RUNTIMES}" \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH="${STAGING_DIR}" \
     -DLLVM_BINUTILS_INCDIR:PATH="/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include" \
@@ -160,6 +176,9 @@ cmake \
 
 # Build and install artifacts
 ninja ${NINJA_TARGET}
+if [[ ! -z "${NINJA_TARGET_RUNTIMES}" ]]; then
+    ninja ${NINJA_TARGET_RUNTIMES}
+fi
 
 # Don't try to compress the binaries as they don't like it
 
