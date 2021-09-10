@@ -65,6 +65,19 @@ patmat-trunk)
     URL=https://github.com/bcardosolopes/llvm-project.git
     VERSION=patmat-trunk-$(date +%Y%m%d)
     ;;
+llvm-spirv)
+    BASENAME=llvm-spirv
+    BRANCH=main
+    VERSION=trunk-$(date +%Y%m%d)
+    URL=https://github.com/llvm/llvm-project.git
+
+    SPIRV_LLVM_TRANSLATOR_URL=https://github.com/KhronosGroup/SPIRV-LLVM-Translator.git
+    SPIRV_LLVM_TRANSLATOR_BRANCH=master
+
+    CMAKE_EXTRA_ARGS=-DLLVM_SPIRV_INCLUDE_TESTS=OFF
+    LLVM_ENABLE_PROJECTS="llvm-spirv"
+    NINJA_TARGET=install-llvm-spirv
+    ;;
 llvm-*)
     BASENAME=llvm
     NINJA_TARGET=install-llvm-headers
@@ -158,6 +171,11 @@ if ((COMMIT_DATE < TIMESTAMP_BOOTSTRAP_NECESSARY)); then
     LLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS};${LLVM_ENABLE_RUNTIMES}"
     LLVM_ENABLE_RUNTIMES=
     NINJA_TARGET_RUNTIMES=
+fi
+
+if [[ -n "${SPIRV_LLVM_TRANSLATOR_URL}" ]]; then
+    # Checkout SPIR-V/LLVM Translator
+    git clone --depth 1 --single-branch -b "${SPIRV_LLVM_TRANSLATOR_BRANCH}" "${SPIRV_LLVM_TRANSLATOR_URL}" "${ROOT}/llvm-project/llvm/projects/SPIRV-LLVM-Translator"
 fi
 
 # Setup build directory and build configuration
