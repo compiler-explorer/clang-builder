@@ -76,7 +76,9 @@ llvm-spirv)
 
     CMAKE_EXTRA_ARGS=-DLLVM_SPIRV_INCLUDE_TESTS=OFF
     LLVM_ENABLE_PROJECTS="llvm-spirv"
+    LLVM_ENABLE_RUNTIMES=
     NINJA_TARGET=install-llvm-spirv
+    NINJA_TARGET_RUNTIMES=
     ;;
 llvm-*)
     BASENAME=llvm
