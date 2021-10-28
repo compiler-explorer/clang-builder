@@ -119,6 +119,19 @@ esac
 # use tag name as branch if otherwise unspecified
 BRANCH=${BRANCH-$TAG}
 
+FULLNAME=${BASENAME}-${VERSION}
+OUTPUT=${ROOT}/${FULLNAME}.tar.xz
+S3OUTPUT=
+if [[ $2 =~ ^s3:// ]]; then
+    S3OUTPUT=$2
+else
+    if [[ -d "${2}" ]]; then
+        OUTPUT=$2/${FULLNAME}.tar.xz
+    else
+        OUTPUT=${2-$OUTPUT}
+    fi
+fi
+
 # some builds checkout a tag instead of a branch
 # these builds have a different prefix for ls-remote
 REF=refs/heads/${BRANCH}
@@ -144,19 +157,6 @@ mkdir -p /opt/compiler-explorer
 pushd /opt/compiler-explorer
 curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
 popd
-
-FULLNAME=${BASENAME}-${VERSION}
-OUTPUT=${ROOT}/${FULLNAME}.tar.xz
-S3OUTPUT=
-if [[ $2 =~ ^s3:// ]]; then
-    S3OUTPUT=$2
-else
-    if [[ -d "${2}" ]]; then
-        OUTPUT=$2/${FULLNAME}.tar.xz
-    else
-        OUTPUT=${2-$OUTPUT}
-    fi
-fi
 
 BUILD_DIR=${ROOT}/build
 STAGING_DIR=${ROOT}/staging
