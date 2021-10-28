@@ -132,6 +132,7 @@ REVISION="llvmorg-${LLVMORG_REVISION}-gcc-${BINUTILS_GCC_VERSION}"
 LAST_REVISION="${3}"
 
 echo "ce-build-revision:${REVISION}"
+echo "ce-build-output:${OUTPUT}"
 
 if [[ "${REVISION}" == "${LAST_REVISION}" ]]; then
     echo "ce-build-status:SKIPPED"
