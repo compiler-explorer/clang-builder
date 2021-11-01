@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exuo pipefail
+set -exo pipefail
 
 # Grab CE's GCC for its binutils
 BINUTILS_GCC_VERSION=9.2.0

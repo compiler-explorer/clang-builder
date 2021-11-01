@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exuo pipefail
+set -exo pipefail
 
 ROOT=$PWD
 VERSION=$1
@@ -13,6 +13,7 @@ LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
 BASENAME=clang
 NINJA_TARGET=install
 NINJA_TARGET_RUNTIMES=install-runtimes
+TAG=
 
 case $VERSION in
 autonsdmi-trunk)
