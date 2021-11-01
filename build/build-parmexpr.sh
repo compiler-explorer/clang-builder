@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -exuo pipefail
 
 # Grab CE's GCC for its binutils
 BINUTILS_GCC_VERSION=9.2.0
@@ -20,10 +20,27 @@ VERSION=parmexpr-trunk-$(date +%Y%m%d)
 
 OUTPUT=/root/clang-${VERSION}.tar.xz
 S3OUTPUT=""
-if echo $2 | grep s3://; then
+if [[ $2 =~ ^s3:// ]]; then
     S3OUTPUT=$2
 else
-    OUTPUT=${2-/root/clang-${VERSION}.tar.xz}
+    if [[ -d "${2}" ]]; then
+        OUTPUT=$2/${FULLNAME}.tar.xz
+    else
+        OUTPUT=${2-$OUTPUT}
+    fi
+fi
+
+# determine build revision
+PARMEXPR_VERSION=$(sha256sum ./install_parmexpr_src.sh | awk '{print $1}')
+REVISION="parmexpr-${PARMEXPR_VERSION}-gcc-${BINUTILS_GCC_VERSION}"
+LAST_REVISION="${3}"
+
+echo "ce-build-revision:${REVISION}"
+echo "ce-build-output:${OUTPUT}"
+
+if [[ "${REVISION}" == "${LAST_REVISION}" ]]; then
+    echo "ce-build-status:SKIPPED"
+    exit
 fi
 
 STAGING_DIR=$(pwd)/staging
@@ -47,3 +64,5 @@ tar Jcf ${OUTPUT} --transform "s,^./,./clang-${VERSION}/," -C ${STAGING_DIR} .
 if [[ ! -z "${S3OUTPUT}" ]]; then
     aws s3 cp --storage-class REDUCED_REDUNDANCY "${OUTPUT}" "${S3OUTPUT}"
 fi
+
+echo "ce-build-status:OK"
