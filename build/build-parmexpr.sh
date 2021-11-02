@@ -25,7 +25,7 @@ if [[ $2 =~ ^s3:// ]]; then
     S3OUTPUT=$2
 else
     if [[ -d "${2}" ]]; then
-        OUTPUT=$2/${FULLNAME}.tar.xz
+        OUTPUT=$2/${FULLNAME}
     else
         OUTPUT=${2-$OUTPUT}
     fi
