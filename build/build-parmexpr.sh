@@ -18,7 +18,8 @@ curl -sL -o ./install_parmexpr_src.sh \
 
 VERSION=parmexpr-trunk-$(date +%Y%m%d)
 
-OUTPUT=/root/clang-${VERSION}.tar.xz
+FULLNAME=clang-${VERSION}.tar.xz
+OUTPUT=/root/${FULLNAME}
 S3OUTPUT=""
 if [[ $2 =~ ^s3:// ]]; then
     S3OUTPUT=$2
