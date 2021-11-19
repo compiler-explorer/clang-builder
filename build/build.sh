@@ -66,6 +66,11 @@ patmat-trunk)
     URL=https://github.com/bcardosolopes/llvm-project.git
     VERSION=patmat-trunk-$(date +%Y%m%d)
     ;;
+reflection-trunk)
+    BRANCH=reflection
+    URL=https://github.com/matus-chochlik/llvm-project.git
+    VERSION=reflection-trunk-$(date +%Y%m%d)
+    ;;
 llvm-spirv)
     BASENAME=llvm-spirv
     BRANCH=main
