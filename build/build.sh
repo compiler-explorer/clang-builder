@@ -198,6 +198,7 @@ cmake \
     -DCMAKE_INSTALL_PREFIX:PATH="${STAGING_DIR}" \
     -DLLVM_BINUTILS_INCDIR:PATH="/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include" \
     -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${LLVM_EXPERIMENTAL_TARGETS_TO_BUILD}" \
+    -DLLVM_PARALLEL_LINK_JOBS=4 \
     ${CMAKE_EXTRA_ARGS}
 
 # Build and install artifacts
