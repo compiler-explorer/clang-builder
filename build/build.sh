@@ -54,7 +54,8 @@ llvmflang-trunk)
     VERSION=llvmflang-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_PROJECTS="mlir;flang;clang"
     LLVM_ENABLE_RUNTIMES=""
-    CMAKE_EXTRA_ARGS=-DCMAKE_CXX_STANDARD=17
+    # See https://github.com/compiler-explorer/clang-builder/issues/27
+    CMAKE_EXTRA_ARGS=-DCMAKE_CXX_STANDARD=17 -DLLVM_PARALLEL_COMPILE_JOBS=24
     ;;
 relocatable-trunk)
     BRANCH=trivially-relocatable
