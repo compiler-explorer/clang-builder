@@ -43,7 +43,7 @@ embed-trunk)
     VERSION=embed-trunk-$(date +%Y%m%d)
     ;;
 dang-main)
-    BRANCH=dang
+    BRANCH=dang_main
     URL=https://github.com/ThePhD/llvm-project.git
     VERSION=dang-main-$(date +%Y%m%d)
     ;;
