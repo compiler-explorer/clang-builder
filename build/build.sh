@@ -42,6 +42,11 @@ embed-trunk)
     URL=https://github.com/ThePhD/llvm-project.git
     VERSION=embed-trunk-$(date +%Y%m%d)
     ;;
+dang-main)
+    BRANCH=dang
+    URL=https://github.com/ThePhD/llvm-project.git
+    VERSION=dang-main-$(date +%Y%m%d)
+    ;;
 lifetime-trunk)
     BRANCH=lifetime
     URL=https://github.com/mgehre/llvm-project.git
