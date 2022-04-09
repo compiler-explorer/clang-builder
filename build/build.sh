@@ -108,6 +108,29 @@ llvm-spirv)
     NINJA_TARGET=install-llvm-spirv
     NINJA_TARGET_RUNTIMES=
     ;;
+rocm-*)
+    BASENAME=llvm-amdgpu
+    TAG=${VERSION}
+    ROCM_DEVICE_LIBS_BRANCH=${VERSION}
+
+    URL=https://github.com/RadeonOpenCompute/llvm-project.git
+    ROCM_DEVICE_LIBS_URL=https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
+
+    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt;device-libs"
+    CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
+    ;;
+amd-stg-open)
+    BASENAME=llvm-amdgpu
+    BRANCH=${VERSION}
+    ROCM_DEVICE_LIBS_BRANCH=${VERSION}
+    VERSION=trunk-$(date +%Y%m%d)
+
+    URL=https://github.com/RadeonOpenCompute/llvm-project.git
+    ROCM_DEVICE_LIBS_URL=https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
+
+    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt;device-libs"
+    CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
+    ;;
 llvm-*)
     BASENAME=llvm
     NINJA_TARGET=install-llvm-headers
@@ -222,6 +245,11 @@ fi
 if [[ -n "${SPIRV_LLVM_TRANSLATOR_URL}" ]]; then
     # Checkout SPIR-V/LLVM Translator
     git clone --depth 1 --single-branch -b "${BRANCH}" "${SPIRV_LLVM_TRANSLATOR_URL}" "${ROOT}/llvm-project/llvm/projects/SPIRV-LLVM-Translator"
+fi
+
+if [[ -n "${ROCM_DEVICE_LIBS_URL}" ]]; then
+    # Checkout ROCm Device Libraries
+    git clone --depth 1 --single-branch -b "${ROCM_DEVICE_LIBS_BRANCH}" "${ROCM_DEVICE_LIBS_URL}" "${ROOT}/llvm-project/llvm/projects/Device-Libs"
 fi
 
 # Setup build directory and build configuration
