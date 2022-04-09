@@ -6,7 +6,7 @@ ROOT=$PWD
 VERSION=$1
 
 BINUTILS_GCC_VERSION=9.2.0
-CMAKE_EXTRA_ARGS=
+declare -a CMAKE_EXTRA_ARGS
 LLVM_ENABLE_PROJECTS="clang;"
 LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
@@ -20,7 +20,7 @@ autonsdmi-trunk)
     BRANCH=experiments
     URL=https://github.com/cor3ntin/llvm-project.git
     VERSION=autonsdmi-trunk-$(date +%Y%m%d)
-    CMAKE_EXTRA_ARGS=-DLLVM_OPTIMIZED_TABLEGEN=ON
+    CMAKE_EXTRA_ARGS+=("-DLLVM_OPTIMIZED_TABLEGEN=ON")
     ;;
 cppx-trunk)
     BRANCH=compiler-explorer
@@ -77,7 +77,7 @@ llvmflang-trunk)
     LLVM_ENABLE_RUNTIMES=""
     NINJA_TARGET_RUNTIMES=
     # See https://github.com/compiler-explorer/clang-builder/issues/27
-    CMAKE_EXTRA_ARGS="-DCMAKE_CXX_STANDARD=17 -DLLVM_PARALLEL_COMPILE_JOBS=24"
+    CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_STANDARD=17" "-DLLVM_PARALLEL_COMPILE_JOBS=24")
     ;;
 relocatable-trunk)
     BRANCH=trivially-relocatable
@@ -102,7 +102,7 @@ llvm-spirv)
 
     SPIRV_LLVM_TRANSLATOR_URL=https://github.com/KhronosGroup/SPIRV-LLVM-Translator.git
 
-    CMAKE_EXTRA_ARGS="-DLLVM_SPIRV_INCLUDE_TESTS=OFF -DSPIRV_SKIP_CLANG_BUILD=ON -DSPIRV_SKIP_DEBUG_INFO_TESTS=ON"
+    CMAKE_EXTRA_ARGS+=("-DLLVM_SPIRV_INCLUDE_TESTS=OFF" "-DSPIRV_SKIP_CLANG_BUILD=ON" "-DSPIRV_SKIP_DEBUG_INFO_TESTS=ON")
     LLVM_ENABLE_PROJECTS=""
     LLVM_ENABLE_RUNTIMES=
     NINJA_TARGET=install-llvm-spirv
@@ -146,7 +146,7 @@ mlir-*)
     assertions-trunk)
         BRANCH=main
         VERSION=assertions-trunk-$(date +%Y%m%d)
-        CMAKE_EXTRA_ARGS=-DLLVM_ENABLE_ASSERTIONS=ON
+        CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
         ;;
     *)
         TAG=llvmorg-${VERSION}
@@ -236,7 +236,7 @@ cmake \
     -DLLVM_BINUTILS_INCDIR:PATH="/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include" \
     -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${LLVM_EXPERIMENTAL_TARGETS_TO_BUILD}" \
     -DLLVM_PARALLEL_LINK_JOBS=4 \
-    ${CMAKE_EXTRA_ARGS}
+    "${CMAKE_EXTRA_ARGS[@]}"
 
 # Build and install artifacts
 ninja ${NINJA_TARGET}
