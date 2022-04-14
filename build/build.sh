@@ -32,6 +32,11 @@ cppx-p2320-trunk)
     URL=https://github.com/lock3/meta.git
     VERSION=cppx-p2320-trunk-$(date +%Y%m%d)
     ;;
+cppx-p1061-trunk)
+    BRANCH=ricejasonf/p1061
+    URL=https://github.com/ricejasonf/llvm-project.git
+    VERSION=cppx-p1061-trunk-$(date +%Y%m%d)
+    ;;
 cppx-ext-trunk)
     BRANCH=cppx
     URL=https://github.com/lock3/cppx.git
