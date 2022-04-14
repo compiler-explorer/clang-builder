@@ -47,6 +47,10 @@ dang-main)
     URL=https://github.com/ThePhD/llvm-project.git
     VERSION=dang-main-$(date +%Y%m%d)
     ;;
+sb-pack)
+    BRANCH=p1061
+    URL=https://github.com/ricejasonf/llvm-project.git
+    VERSION=sb-pack-$(date +%Y%m%d)
 lifetime-trunk)
     BRANCH=lifetime
     URL=https://github.com/mgehre/llvm-project.git
