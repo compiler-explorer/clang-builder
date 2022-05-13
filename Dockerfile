@@ -12,14 +12,17 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     g++ \
     gcc \
     git \
+    jq \
     libc6-dev-i386 \
     linux-libc-dev \
     make \
     ninja-build \
     patch \
+    pv \
     python \
     python3 \
     subversion \
+    time \
     texinfo \
     unzip \
     wget \
@@ -33,10 +36,25 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
 
 
 WORKDIR /root
+#TODO put erverything in /opt
+RUN curl -sL https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0-Linux-x86_64.tar.gz | tar zxf - && \
+    ln -s /root/cmake-3.18.0-Linux-x86_64/bin/* /bin/
 
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0-Linux-x86_64.tar.gz && \
-    tar xzvf cmake-3.18.0-Linux-x86_64.tar.gz
-RUN ln -s /root/cmake-3.18.0-Linux-x86_64/bin/cmake /bin/cmake
+RUN curl -sL https://github.com/elfshaker/elfshaker/releases/download/v0.9.0/elfshaker_v0.9.0_x86_64-unknown-linux-musl.tar.gz | tar zxf - && \
+    mv /root/elfshaker/elfshaker /bin/ && \
+    rm -rf elfshaker
+
+RUN mkdir -p /opt/compiler-explorer && \
+    curl -sL https://s3.amazonaws.com/compiler-explorer/opt/clang-12.0.1.tar.xz | tar Jxf - -C /opt/compiler-explorer && \
+    ln -s /opt/compiler-explorer/clang-12.0.1//bin/clang /bin/clang-12 && \
+    ln -s /opt/compiler-explorer/clang-12.0.1//bin/clang++ /bin/clang++-12
+
+RUN git clone https://github.com/olsner/jobclient && \
+    cd jobclient && make && mv jobserver /bin && cd .. && rm -rf jobclient
+
+RUN curl -sL https://go.dev/dl/go1.18.2.linux-amd64.tar.gz | tar zxf - && \
+    ln -sf /root/go/bin/go /bin
+
 
 RUN mkdir -p /root
 COPY build /root/
