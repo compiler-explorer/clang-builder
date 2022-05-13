@@ -52,6 +52,11 @@ dang-main)
     URL=https://github.com/ThePhD/llvm-project.git
     VERSION=dang-main-$(date +%Y%m%d)
     ;;
+widberg-main)
+    BRANCH=main
+    URL=https://github.com/widberg/llvm-project-widberg-extensions.git
+    VERSION=widberg-main-$(date +%Y%m%d)
+    ;;
 lifetime-trunk)
     BRANCH=lifetime
     URL=https://github.com/mgehre/llvm-project.git
