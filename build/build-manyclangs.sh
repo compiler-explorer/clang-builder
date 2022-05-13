@@ -5,6 +5,11 @@ set -exo pipefail
 git clone https://github.com/llvm/llvm-project.git
 git clone https://github.com/elfshaker/elfshaker
 
+pushd elfshaker/contrib/compdb2line/
+go build
+cp compdb2line /bin
+popd
+
 cd llvm-project
 
 # TODO - split $1 into yyyy/mm
