@@ -8,6 +8,7 @@ RUN apt update -y -q && apt install -y -q software-properties-common && \
     apt install -y -q \
     bison \
     bzip2 \
+    ccache \
     curl \
     file \
     flex \

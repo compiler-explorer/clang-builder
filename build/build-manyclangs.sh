@@ -18,8 +18,8 @@ PATH=${PATH}:$(realpath ../elfshaker/contrib)
 
 manyclangs-build-month 2022 01
 
-REVISION=TODO
-OUTPUT=TODO - some
+REVISION="TODO"
+OUTPUT="TODO - some"
 
 # todo output needs to be two things
 echo "ce-build-revision:${REVISION}"
