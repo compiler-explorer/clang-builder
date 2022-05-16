@@ -133,8 +133,8 @@ llvm-*)
         ;;
     esac
     URL=https://github.com/llvm/llvm-project.git
-    LLVM_ENABLE_PROJECTS="clang;compiler-rt;lld;polly;clang-tools-extra;openmp"
-    LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"
+    LLVM_ENABLE_PROJECTS="clang;compiler-rt;lld;polly;clang-tools-extra"
+    LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;openmp"
     LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="RISCV;WebAssembly"
     ;;
 esac
