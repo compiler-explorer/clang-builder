@@ -117,6 +117,21 @@ llvm-*)
     fi
     URL=https://github.com/llvm/llvm-project.git
     ;;
+mlir-*)
+    BASENAME=mlir
+    LLVM_ENABLE_PROJECTS="mlir"
+    LLVM_ENABLE_RUNTIMES=
+    NINJA_TARGET_RUNTIMES=
+
+    VERSION=${VERSION#mlir-}
+    if [[ "${VERSION}" == "trunk" ]]; then
+        BRANCH=main
+        VERSION=trunk-$(date +%Y%m%d)
+    else
+        TAG=llvmorg-${VERSION}
+    fi
+    URL=https://github.com/llvm/llvm-project.git
+    ;;
 *)
     case $VERSION in
     trunk)
