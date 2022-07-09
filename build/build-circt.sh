@@ -99,7 +99,7 @@ ninja ${NINJA_TARGET}
 # Build CIRCT
 
 mkdir -p ${BUILD2_DIR}
-cd build
+cd ${BUILD2_DIR}
 cmake \
     -G "Ninja" "${ROOT}/circt" \
     -DMLIR_DIR="${BUILD_DIR}/lib/cmake/mlir" \
