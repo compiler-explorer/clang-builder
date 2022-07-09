@@ -83,7 +83,7 @@ git submodule update
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
 cmake \
-    -G "Ninja" "${ROOT}/circt/llvm" \
+    -G "Ninja" "${ROOT}/circt/llvm/llvm" \
     -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
     -DLLVM_ENABLE_RUNTIMES="${LLVM_ENABLE_RUNTIMES}" \
     -DLLVM_ENABLE_ASSERTIONS=ON \
