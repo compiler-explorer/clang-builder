@@ -24,9 +24,6 @@ circt-trunk)
     ;;
 esac
 
-# use tag name as branch if otherwise unspecified
-BRANCH=${BRANCH-$TAG}
-
 FULLNAME=${BASENAME}-${VERSION}
 OUTPUT=${ROOT}/${FULLNAME}.tar.xz
 S3OUTPUT=
@@ -109,7 +106,8 @@ cmake \
     -DMLIR_DIR="${BUILD_DIR}/lib/cmake/mlir" \
     -DLLVM_DIR="${BUILD_DIR}/lib/cmake/llvm" \
     -DLLVM_ENABLE_ASSERTIONS=ON \
-    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX:PATH="${STAGING_DIR}"
 
 ninja ${NINJA_TARGET}
 
