@@ -5,7 +5,7 @@ set -exo pipefail
 ROOT=$PWD
 VERSION=$1
 
-BINUTILS_GCC_VERSION=9.2.0
+BINUTILS_GCC_VERSION=11.3.0
 CMAKE_EXTRA_ARGS=
 LLVM_ENABLE_PROJECTS="mlir"
 LLVM_ENABLE_RUNTIMES=""
@@ -65,6 +65,9 @@ mkdir -p /opt/compiler-explorer
 pushd /opt/compiler-explorer
 curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
 popd
+
+CXX=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/bin/g++
+CC=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/bin/gcc
 
 BUILD_DIR=${ROOT}/buildllvm
 BUILD2_DIR=${ROOT}/buildcirct
