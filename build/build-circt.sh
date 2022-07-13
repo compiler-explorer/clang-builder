@@ -66,8 +66,8 @@ pushd /opt/compiler-explorer
 curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
 popd
 
-CXX=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/bin/g++
-CC=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/bin/gcc
+export CXX=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/bin/g++
+export CC=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/bin/gcc
 
 BUILD_DIR=${ROOT}/buildllvm
 BUILD2_DIR=${ROOT}/buildcirct
