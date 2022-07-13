@@ -20,7 +20,6 @@ circt-trunk)
     BRANCH=main
     URL=https://github.com/llvm/circt.git
     VERSION=circt-trunk-$(date +%Y%m%d)
-    TAG=${VERSION}
     ;;
 esac
 
