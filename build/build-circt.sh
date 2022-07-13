@@ -68,7 +68,7 @@ popd
 
 export CXX=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/bin/g++
 export CC=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/bin/gcc
-export LIBRARY_PATH=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib64
+export LD_LIBRARY_PATH=/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib64
 
 BUILD_DIR=${ROOT}/buildllvm
 BUILD2_DIR=${ROOT}/buildcirct
