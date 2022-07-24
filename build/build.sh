@@ -57,6 +57,12 @@ widberg-main)
     URL=https://github.com/widberg/llvm-project-widberg-extensions.git
     VERSION=widberg-main-$(date +%Y%m%d)
     ;;
+mizvekov-resugar)
+    BRANCH=resugar
+    URL=https://github.com/mizvekov/llvm-project.git
+    VERSION=mizvekov-resugar-$(date +%Y%m%d)
+    CMAKE_EXTRA_ARGS=-DLLVM_ENABLE_ASSERTIONS=ON
+    ;;
 lifetime-trunk)
     BRANCH=lifetime
     URL=https://github.com/mgehre/llvm-project.git
