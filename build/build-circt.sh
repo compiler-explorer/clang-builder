@@ -19,7 +19,7 @@ case $VERSION in
 trunk)
     BRANCH=main
     URL=https://github.com/llvm/circt.git
-    VERSION=circt-trunk-$(date +%Y%m%d)
+    VERSION=trunk-$(date +%Y%m%d)
     ;;
 esac
 
