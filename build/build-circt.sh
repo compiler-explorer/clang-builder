@@ -16,7 +16,7 @@ NINJA_TARGET_RUNTIMES=
 TAG=
 
 case $VERSION in
-circt-trunk)
+trunk)
     BRANCH=main
     URL=https://github.com/llvm/circt.git
     VERSION=circt-trunk-$(date +%Y%m%d)
