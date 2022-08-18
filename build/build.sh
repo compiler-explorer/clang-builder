@@ -101,7 +101,6 @@ llvm-spirv)
     URL=https://github.com/llvm/llvm-project.git
 
     SPIRV_LLVM_TRANSLATOR_URL=https://github.com/KhronosGroup/SPIRV-LLVM-Translator.git
-    SPIRV_LLVM_TRANSLATOR_BRANCH=master
 
     CMAKE_EXTRA_ARGS=-DLLVM_SPIRV_INCLUDE_TESTS=OFF
     LLVM_ENABLE_PROJECTS="llvm-spirv"
@@ -222,7 +221,7 @@ fi
 
 if [[ -n "${SPIRV_LLVM_TRANSLATOR_URL}" ]]; then
     # Checkout SPIR-V/LLVM Translator
-    git clone --depth 1 --single-branch -b "${SPIRV_LLVM_TRANSLATOR_BRANCH}" "${SPIRV_LLVM_TRANSLATOR_URL}" "${ROOT}/llvm-project/llvm/projects/SPIRV-LLVM-Translator"
+    git clone --depth 1 --single-branch -b "${BRANCH}" "${SPIRV_LLVM_TRANSLATOR_URL}" "${ROOT}/llvm-project/llvm/projects/SPIRV-LLVM-Translator"
 fi
 
 # Setup build directory and build configuration
