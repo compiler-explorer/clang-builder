@@ -116,7 +116,7 @@ rocm-*)
     URL=https://github.com/RadeonOpenCompute/llvm-project.git
     ROCM_DEVICE_LIBS_URL=https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
 
-    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt;device-libs"
+    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt"
     CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
     ;;
 amd-stg-open)
@@ -128,7 +128,7 @@ amd-stg-open)
     URL=https://github.com/RadeonOpenCompute/llvm-project.git
     ROCM_DEVICE_LIBS_URL=https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
 
-    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt;device-libs"
+    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt"
     CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
     ;;
 llvm-*)
