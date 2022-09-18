@@ -19,6 +19,7 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     patch \
     python \
     python3 \
+    python3-dev \
     subversion \
     texinfo \
     unzip \
