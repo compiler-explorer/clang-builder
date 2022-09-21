@@ -95,14 +95,13 @@ reflection-trunk)
     VERSION=reflection-trunk-$(date +%Y%m%d)
     ;;
 rocm-*)
-    ROCM_DEVICE_LIBS_BRANCH=${VERSION}
-
-    VERSION=${VERSION#rocm-}
-    if [[ "${VERSION}" == "trunk" ]]; then
+    if [[ "${VERSION#rocm-}" == "trunk" ]]; then
         BRANCH=amd-stg-open
-        VERSION=trunk-$(date +%Y%m%d)
+        ROCM_DEVICE_LIBS_BRANCH=${BRANCH}
+        VERSION=rocm-trunk-$(date +%Y%m%d)
     else
         TAG=${VERSION}
+        ROCM_DEVICE_LIBS_BRANCH=${VERSION}
     fi
 
     URL=https://github.com/RadeonOpenCompute/llvm-project.git
