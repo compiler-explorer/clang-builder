@@ -94,6 +94,23 @@ reflection-trunk)
     URL=https://github.com/matus-chochlik/llvm-project.git
     VERSION=reflection-trunk-$(date +%Y%m%d)
     ;;
+rocm-*)
+    ROCM_DEVICE_LIBS_BRANCH=${VERSION}
+
+    VERSION=${VERSION#rocm-}
+    if [[ "${VERSION}" == "trunk" ]]; then
+        BRANCH=amd-stg-open
+        VERSION=trunk-$(date +%Y%m%d)
+    else
+        TAG=${VERSION}
+    fi
+
+    URL=https://github.com/RadeonOpenCompute/llvm-project.git
+    ROCM_DEVICE_LIBS_URL=https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
+
+    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt"
+    CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
+    ;;
 llvm-spirv)
     BASENAME=llvm-spirv
     BRANCH=main
@@ -101,35 +118,11 @@ llvm-spirv)
     URL=https://github.com/llvm/llvm-project.git
 
     SPIRV_LLVM_TRANSLATOR_URL=https://github.com/KhronosGroup/SPIRV-LLVM-Translator.git
-
     CMAKE_EXTRA_ARGS+=("-DLLVM_SPIRV_INCLUDE_TESTS=OFF" "-DSPIRV_SKIP_CLANG_BUILD=ON" "-DSPIRV_SKIP_DEBUG_INFO_TESTS=ON")
     LLVM_ENABLE_PROJECTS=""
     LLVM_ENABLE_RUNTIMES=
     NINJA_TARGET=install-llvm-spirv
     NINJA_TARGET_RUNTIMES=
-    ;;
-rocm-*)
-    BASENAME=llvm-amdgpu
-    TAG=${VERSION}
-    ROCM_DEVICE_LIBS_BRANCH=${VERSION}
-
-    URL=https://github.com/RadeonOpenCompute/llvm-project.git
-    ROCM_DEVICE_LIBS_URL=https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
-
-    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt"
-    CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
-    ;;
-amd-stg-open)
-    BASENAME=llvm-amdgpu
-    BRANCH=${VERSION}
-    ROCM_DEVICE_LIBS_BRANCH=${VERSION}
-    VERSION=trunk-$(date +%Y%m%d)
-
-    URL=https://github.com/RadeonOpenCompute/llvm-project.git
-    ROCM_DEVICE_LIBS_URL=https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
-
-    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt"
-    CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
     ;;
 llvm-*)
     BASENAME=llvm
