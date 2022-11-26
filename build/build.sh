@@ -16,6 +16,11 @@ NINJA_TARGET_RUNTIMES=install-runtimes
 TAG=
 
 case $VERSION in
+ce-trunk)
+    BRANCH=main
+    URL=https://github.com/compiler-explorer/llvm-project.git
+    VERSION=cppx-trunk-$(date +%Y%m%d)
+    ;;
 autonsdmi-trunk)
     BRANCH=experiments
     URL=https://github.com/cor3ntin/llvm-project.git
