@@ -19,7 +19,7 @@ case $VERSION in
 ce-trunk)
     BRANCH=main
     URL=https://github.com/compiler-explorer/llvm-project.git
-    VERSION=cppx-trunk-$(date +%Y%m%d)
+    VERSION=ce-trunk-$(date +%Y%m%d)
     ;;
 autonsdmi-trunk)
     BRANCH=experiments
