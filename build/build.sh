@@ -17,7 +17,7 @@ TAG=
 
 case $VERSION in
 ce-trunk)
-    BRANCH=dbg-speedup
+    BRANCH=dbg-to-stdout
     URL=https://github.com/compiler-explorer/llvm-project.git
     VERSION=ce-trunk-$(date +%Y%m%d)
     ;;
