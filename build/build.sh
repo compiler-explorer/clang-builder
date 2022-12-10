@@ -174,6 +174,17 @@ mlir-*)
         ;;
     *)
         TAG=llvmorg-${VERSION}
+        case $VERSION in
+        "12.0.1" | "12.0.0")
+            PATCH_TO_APPLY=./patches/ce-debug-clang-12.patch
+            ;;
+        "11.0.1" | "11.0.0")
+            PATCH_TO_APPLY=./patches/ce-debug-clang-11.patch
+            ;;
+        *)
+            PATCH_TO_APPLY=./patches/ce-debug-clang-trunk.patch
+            ;;
+        esac
         ;;
     esac
     URL=https://github.com/llvm/llvm-project.git
