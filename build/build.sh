@@ -14,6 +14,7 @@ BASENAME=clang
 NINJA_TARGET=install
 NINJA_TARGET_RUNTIMES=install-runtimes
 TAG=
+PATCH_TO_APPLY=
 
 case $VERSION in
 ce-trunk)
@@ -164,6 +165,7 @@ mlir-*)
     trunk)
         BRANCH=main
         VERSION=trunk-$(date +%Y%m%d)
+        PATCH_TO_APPLY=./patches/ce-debug-clang-trunk.patch
         ;;
     assertions-trunk)
         BRANCH=main
@@ -230,6 +232,10 @@ mkdir -p "${STAGING_DIR}"
 
 # Setup llvm-project checkout
 git clone --depth 1 --single-branch -b "${BRANCH}" "${URL}" "${ROOT}/llvm-project"
+
+if [[ -n "${PATCH_TO_APPLY}" ]]; then
+    git apply "${PATCH}" "--directory=${ROOT}/llvm-project"
+fi
 
 # For older LLVM versions, merge runtime and projects
 # August 2021 is when bootstrapping become necessary, bootstrapping might have been supported previously a few years prior
