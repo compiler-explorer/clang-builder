@@ -66,7 +66,7 @@ mizvekov-resugar)
     BRANCH=resugar
     URL=https://github.com/mizvekov/llvm-project.git
     VERSION=mizvekov-resugar-$(date +%Y%m%d)
-    CMAKE_EXTRA_ARGS=-DLLVM_ENABLE_ASSERTIONS=ON
+    CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
     ;;
 lifetime-trunk)
     BRANCH=lifetime
