@@ -178,7 +178,7 @@ mlir-*)
         "12.0.1" | "12.0.0")
             PATCH_TO_APPLY=./patches/ce-debug-clang-12.patch
             ;;
-        "11.0.1" | "11.0.0")
+        "11.0.1" | "11.0.0" | "10.0.1" | "10.0.0")
             PATCH_TO_APPLY=./patches/ce-debug-clang-11.patch
             ;;
         *)
