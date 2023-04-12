@@ -19,17 +19,7 @@ curl -sL -o ./install_parmexpr_src.sh \
 VERSION=parmexpr-trunk-$(date +%Y%m%d)
 
 FULLNAME=clang-${VERSION}.tar.xz
-OUTPUT=/root/${FULLNAME}
-S3OUTPUT=""
-if [[ $2 =~ ^s3:// ]]; then
-    S3OUTPUT=$2
-else
-    if [[ -d "${2}" ]]; then
-        OUTPUT=$2/${FULLNAME}
-    else
-        OUTPUT=${2-$OUTPUT}
-    fi
-fi
+OUTPUT=$2/${FULLNAME}
 
 # determine build revision
 PARMEXPR_VERSION=$(sha256sum ./install_parmexpr_src.sh | awk '{print $1}')
@@ -61,9 +51,5 @@ ninja install
 
 export XZ_DEFAULTS="-T 0"
 tar Jcf ${OUTPUT} --transform "s,^./,./clang-${VERSION}/," -C ${STAGING_DIR} .
-
-if [[ ! -z "${S3OUTPUT}" ]]; then
-    aws s3 cp --storage-class REDUCED_REDUNDANCY "${OUTPUT}" "${S3OUTPUT}"
-fi
 
 echo "ce-build-status:OK"

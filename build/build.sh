@@ -199,17 +199,7 @@ esac
 BRANCH=${BRANCH-$TAG}
 
 FULLNAME=${BASENAME}-${VERSION}
-OUTPUT=${ROOT}/${FULLNAME}.tar.xz
-S3OUTPUT=
-if [[ $2 =~ ^s3:// ]]; then
-    S3OUTPUT=$2
-else
-    if [[ -d "${2}" ]]; then
-        OUTPUT=$2/${FULLNAME}.tar.xz
-    else
-        OUTPUT=${2-$OUTPUT}
-    fi
-fi
+OUTPUT=$2/${FULLNAME}.tar.xz
 
 # some builds checkout a tag instead of a branch
 # these builds have a different prefix for ls-remote
@@ -296,8 +286,5 @@ fi
 export XZ_DEFAULTS="-T 0"
 tar Jcf "${OUTPUT}" --transform "s,^./,./${FULLNAME}/," -C "${STAGING_DIR}" .
 
-if [[ -n "${S3OUTPUT}" ]]; then
-    aws s3 cp --storage-class REDUCED_REDUNDANCY "${OUTPUT}" "${S3OUTPUT}"
-fi
 
 echo "ce-build-status:OK"
