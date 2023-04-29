@@ -191,7 +191,7 @@ mlir-*)
     URL=https://github.com/llvm/llvm-project.git
     LLVM_ENABLE_PROJECTS="clang;lld;polly;clang-tools-extra"
     LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;compiler-rt;openmp"
-    LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="RISCV;WebAssembly"
+    LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68K;WebAssembly"
     ;;
 esac
 
