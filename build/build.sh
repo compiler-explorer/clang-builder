@@ -178,12 +178,15 @@ mlir-*)
         case $VERSION in
         "12.0.1" | "12.0.0")
             PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-12.patch"
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
             ;;
         "11.0.1" | "11.0.0" | "10.0.1" | "10.0.0")
             PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-11.patch"
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
             ;;
         *)
             PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
             ;;
         esac
         ;;
@@ -191,7 +194,6 @@ mlir-*)
     URL=https://github.com/llvm/llvm-project.git
     LLVM_ENABLE_PROJECTS="clang;lld;polly;clang-tools-extra"
     LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;compiler-rt;openmp"
-    LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
     ;;
 esac
 
