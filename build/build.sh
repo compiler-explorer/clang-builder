@@ -7,6 +7,7 @@ VERSION=$1
 
 BINUTILS_GCC_VERSION=9.2.0
 declare -a CMAKE_EXTRA_ARGS
+declare -a NINJA_EXTRA_TARGETS
 LLVM_ENABLE_PROJECTS="clang;"
 LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
@@ -179,6 +180,7 @@ mlir-*)
         PURE_VERSION=${VERSION#assertions-}
         if [[ "${VERSION}" != "${PURE_VERSION}" ]]; then
             CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
+            NINJA_EXTRA_TARGETS+=("check-llvm" "check-clang" "check-libcxx")
         fi
         TAG=llvmorg-${PURE_VERSION}
         case $PURE_VERSION in
@@ -284,7 +286,7 @@ cmake \
     "${CMAKE_EXTRA_ARGS[@]}"
 
 # Build and install artifacts
-ninja ${NINJA_TARGET}
+ninja ${NINJA_TARGET} ${NINJA_EXTRA_TARGETS[@]}
 if [[ -n "${NINJA_TARGET_RUNTIMES}" ]]; then
     ninja "${NINJA_TARGET_RUNTIMES}"
 fi
