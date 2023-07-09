@@ -180,7 +180,7 @@ mlir-*)
         PURE_VERSION=${VERSION#assertions-}
         if [[ "${VERSION}" != "${PURE_VERSION}" ]]; then
             CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
-            NINJA_EXTRA_TARGETS+=("check-llvm" "check-clang" "check-libcxx")
+            NINJA_EXTRA_TARGETS+=("check-llvm" "check-clang" "check-cxx")
         fi
         TAG=llvmorg-${PURE_VERSION}
         case $PURE_VERSION in
