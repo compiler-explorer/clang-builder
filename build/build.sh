@@ -183,20 +183,27 @@ mlir-*)
             NINJA_EXTRA_TARGETS+=("check-llvm" "check-clang" "check-cxx")
         fi
         TAG=llvmorg-${PURE_VERSION}
-        case $PURE_VERSION in
-        "12.0.1" | "12.0.0")
-            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-12.patch"
-            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
-            ;;
-        "11.0.1" | "11.0.0" | "10.0.1" | "10.0.0")
-            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-11.patch"
-            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
-            ;;
-        *)
-            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
-            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
-            ;;
-        esac
+
+        # Patch debug output for clangs 10+
+        if [[ $PURE_VERSION =~ ([0-9]+)\.([0-9]+)\.(.*) ]]; then
+            MAJOR=${BASH_REMATCH[1]}
+            if [[ $MAJOR -lt 10 ]]; then
+                echo "clang older than 10 detected: not patching"
+            elif [[ $MAJOR -lt 12 ]]; then
+                # versions 10 and 11
+                PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-11.patch"
+                LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
+            elif [[ $MAJOR -eq 12 ]]; then
+                PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-12.patch"
+                LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
+            else
+                PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
+                LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
+            fi
+        else
+            echo "Unable to determine version of ${PURE_VERSION}"
+            exit 1
+        fi
         ;;
     esac
     URL=https://github.com/llvm/llvm-project.git
@@ -286,7 +293,7 @@ cmake \
     "${CMAKE_EXTRA_ARGS[@]}"
 
 # Build and install artifacts
-ninja ${NINJA_TARGET} ${NINJA_EXTRA_TARGETS[@]}
+ninja ${NINJA_TARGET} "${NINJA_EXTRA_TARGETS[@]}"
 if [[ -n "${NINJA_TARGET_RUNTIMES}" ]]; then
     ninja "${NINJA_TARGET_RUNTIMES}"
 fi
