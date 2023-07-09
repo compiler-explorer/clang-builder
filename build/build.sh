@@ -62,6 +62,7 @@ widberg-main)
     BRANCH=main
     URL=https://github.com/widberg/llvm-project-widberg-extensions.git
     VERSION=widberg-main-$(date +%Y%m%d)
+    CMAKE_EXTRA_ARGS+=("-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DLLVM_ENABLE_ASSERTIONS=ON" "-DLLVM_TARGETS_TO_BUILD=X86")
     ;;
 mizvekov-resugar)
     BRANCH=resugar
