@@ -174,8 +174,13 @@ mlir-*)
         PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
         ;;
     *)
-        TAG=llvmorg-${VERSION}
-        case $VERSION in
+        # Handle assertions-{VERSION}
+        PURE_VERSION=${VERSION#assertions-}
+        if [[ "${VERSION}" != "${PURE_VERSION}" ]]; then
+            CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
+        fi
+        TAG=llvmorg-${PURE_VERSION}
+        case $PURE_VERSION in
         "12.0.1" | "12.0.0")
             PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-12.patch"
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
