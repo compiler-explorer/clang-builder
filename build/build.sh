@@ -163,6 +163,10 @@ mlir-*)
     URL=https://github.com/llvm/llvm-project.git
     ;;
 *)
+    URL=https://github.com/llvm/llvm-project.git
+    LLVM_ENABLE_PROJECTS="clang;lld;polly;clang-tools-extra"
+    LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;compiler-rt;openmp"
+
     case $VERSION in
     trunk)
         BRANCH=main
@@ -173,42 +177,47 @@ mlir-*)
         BRANCH=main
         VERSION=assertions-trunk-$(date +%Y%m%d)
         CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
+        LLVM_ENABLE_RUNTIMES+=";libunwind"
         PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
         ;;
     *)
         # Handle assertions-{VERSION}
         PURE_VERSION=${VERSION#assertions-}
+        if [[ $PURE_VERSION =~ ([0-9]+)\.([0-9]+)\.(.*) ]]; then
+            MAJOR=${BASH_REMATCH[1]}
+        else
+            echo "Unable to determine version of ${PURE_VERSION}"
+            exit 1
+        fi
         if [[ "${VERSION}" != "${PURE_VERSION}" ]]; then
             CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
             NINJA_EXTRA_TARGETS+=("check-llvm" "check-clang" "check-cxx")
         fi
         TAG=llvmorg-${PURE_VERSION}
 
-        # Patch debug output for clangs 10+
-        if [[ $PURE_VERSION =~ ([0-9]+)\.([0-9]+)\.(.*) ]]; then
-            MAJOR=${BASH_REMATCH[1]}
-            if [[ $MAJOR -lt 10 ]]; then
-                echo "clang older than 10 detected: not patching"
-            elif [[ $MAJOR -lt 12 ]]; then
-                # versions 10 and 11
-                PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-11.patch"
-                LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
-            elif [[ $MAJOR -eq 12 ]]; then
-                PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-12.patch"
-                LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
-            else
-                PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
-                LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
-            fi
+        # Enable libunwind (useful for assertion builds but seemingly useful even if not)
+        if [[ $MAJOR -lt 6 ]]; then
+            LLVM_ENABLE_PROJECTS+=";libunwind"
         else
-            echo "Unable to determine version of ${PURE_VERSION}"
-            exit 1
+            LLVM_ENABLE_RUNTIMES+=";libunwind"
+        fi
+
+        # Patch debug output for clangs 10+
+        if [[ $MAJOR -lt 10 ]]; then
+            echo "clang older than 10 detected: not patching"
+        elif [[ $MAJOR -lt 12 ]]; then
+            # versions 10 and 11
+            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-11.patch"
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
+        elif [[ $MAJOR -eq 12 ]]; then
+            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-12.patch"
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
+        else
+            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
         fi
         ;;
     esac
-    URL=https://github.com/llvm/llvm-project.git
-    LLVM_ENABLE_PROJECTS="clang;lld;polly;clang-tools-extra"
-    LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;compiler-rt;openmp"
     ;;
 esac
 
