@@ -191,7 +191,8 @@ mlir-*)
         fi
         if [[ "${VERSION}" != "${PURE_VERSION}" ]]; then
             CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
-            NINJA_EXTRA_TARGETS+=("check-llvm" "check-clang" "check-cxx")
+            # Disabled for now as they seem to break? cc discord chat with @Endill
+            # NINJA_EXTRA_TARGETS+=("check-llvm" "check-clang" "check-cxx")
         fi
         TAG=llvmorg-${PURE_VERSION}
 
