@@ -33,6 +33,9 @@ WORKDIR /root
 RUN curl -sL https://github.com/Kitware/CMake/releases/download/v3.26.3/cmake-3.26.3-Linux-x86_64.tar.gz \
     | tar zxvf - -C /usr --strip-components=1
 
+# Workaround for older clangs what expect xlocale.h
+RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+
 RUN mkdir -p /root
 COPY build /root/
 
