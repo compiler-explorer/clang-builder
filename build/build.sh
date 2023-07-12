@@ -15,7 +15,7 @@ BASENAME=clang
 NINJA_TARGET=install
 NINJA_TARGET_RUNTIMES=install-runtimes
 TAG=
-PATCH_TO_APPLY=
+declare -a PATCHES_TO_APPLY
 
 case $VERSION in
 ce-trunk)
@@ -171,14 +171,14 @@ mlir-*)
     trunk)
         BRANCH=main
         VERSION=trunk-$(date +%Y%m%d)
-        PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
+        PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
         ;;
     assertions-trunk)
         BRANCH=main
         VERSION=assertions-trunk-$(date +%Y%m%d)
         CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
         LLVM_ENABLE_RUNTIMES+=";libunwind"
-        PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
+        PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
         ;;
     *)
         # Handle assertions-{VERSION}
@@ -205,16 +205,17 @@ mlir-*)
 
         # Patch debug output for clangs 10+
         if [[ $MAJOR -lt 10 ]]; then
-            echo "clang older than 10 detected: not patching"
+            # version 9 don't have a patch for debug
+            echo "Not patching for debug output"
         elif [[ $MAJOR -lt 12 ]]; then
             # versions 10 and 11
-            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-11.patch"
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-11.patch")
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
         elif [[ $MAJOR -eq 12 ]]; then
-            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-12.patch"
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-12.patch")
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
         else
-            PATCH_TO_APPLY="${ROOT}/patches/ce-debug-clang-trunk.patch"
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
         fi
         ;;
@@ -262,11 +263,9 @@ mkdir -p "${STAGING_DIR}"
 # Setup llvm-project checkout
 git clone --depth 1 --single-branch -b "${BRANCH}" "${URL}" "${ROOT}/llvm-project"
 
-if [[ -n "${PATCH_TO_APPLY}" ]]; then
-    cd "${ROOT}/llvm-project"
-    git apply "${PATCH_TO_APPLY}" -v
-    cd "${ROOT}"
-fi
+for PATCH_TO_APPLY in "${PATCHES_TO_APPLY[@]}"; do
+    git -C "${ROOT}/llvm-project" apply "${PATCH_TO_APPLY}" -v
+done
 
 # For older LLVM versions, merge runtime and projects
 # August 2021 is when bootstrapping become necessary, bootstrapping might have been supported previously a few years prior
