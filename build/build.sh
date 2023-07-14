@@ -290,6 +290,7 @@ fi
 # Setup build directory and build configuration
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
+export LD_LIBRARY_PATH="/opt/compiler-explorer/gcc-${GCC_VERSION}/lib64"
 cmake \
     -G "Ninja" "${ROOT}/llvm-project/llvm" \
     -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
