@@ -8,6 +8,7 @@ VERSION=$1
 GCC_VERSION=9.2.0
 declare -a CMAKE_EXTRA_ARGS
 declare -a NINJA_EXTRA_TARGETS
+declare -a NINJA_EXTRA_TARGETS_NO_FAIL
 LLVM_ENABLE_PROJECTS="clang;"
 LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
@@ -191,8 +192,7 @@ mlir-*)
         fi
         if [[ "${VERSION}" != "${PURE_VERSION}" ]]; then
             CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
-            # Disabled for now as they seem to break? cc discord chat with @Endill
-            # NINJA_EXTRA_TARGETS+=("check-llvm" "check-clang" "check-cxx")
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-cxx")
         fi
         TAG=llvmorg-${PURE_VERSION}
 
@@ -307,6 +307,9 @@ cmake \
 ninja ${NINJA_TARGET} "${NINJA_EXTRA_TARGETS[@]}"
 if [[ -n "${NINJA_TARGET_RUNTIMES}" ]]; then
     ninja "${NINJA_TARGET_RUNTIMES}"
+fi
+if [[ -n "${NINJA_EXTRA_TARGETS_NO_FAIL}" ]]; then
+    ninja -k0 "${NINJA_EXTRA_TARGETS_NO_FAIL[@]}"
 fi
 
 # Don't try to compress the binaries as they don't like it
