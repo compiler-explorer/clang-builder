@@ -5,7 +5,7 @@ set -exo pipefail
 ROOT=$PWD
 VERSION=$1
 
-BINUTILS_GCC_VERSION=9.2.0
+GCC_VERSION=9.2.0
 declare -a CMAKE_EXTRA_ARGS
 declare -a NINJA_EXTRA_TARGETS
 LLVM_ENABLE_PROJECTS="clang;"
@@ -238,7 +238,7 @@ fi
 
 # determine build revision
 LLVMORG_REVISION=$(git ls-remote "${URL}" "${REF}" | cut -f 1)
-REVISION="llvmorg-${LLVMORG_REVISION}-gcc-${BINUTILS_GCC_VERSION}"
+REVISION="llvmorg-${LLVMORG_REVISION}-gcc-${GCC_VERSION}"
 LAST_REVISION="${3}"
 
 echo "ce-build-revision:${REVISION}"
@@ -252,7 +252,7 @@ fi
 # Grab CE's GCC for its binutils
 mkdir -p /opt/compiler-explorer
 pushd /opt/compiler-explorer
-curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${BINUTILS_GCC_VERSION}.tar.xz | tar Jxf -
+curl -sL https://s3.amazonaws.com/compiler-explorer/opt/gcc-${GCC_VERSION}.tar.xz | tar Jxf -
 popd
 
 BUILD_DIR=${ROOT}/build
@@ -296,7 +296,9 @@ cmake \
     -DLLVM_ENABLE_RUNTIMES="${LLVM_ENABLE_RUNTIMES}" \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH="${STAGING_DIR}" \
-    -DLLVM_BINUTILS_INCDIR:PATH="/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include" \
+    -DCMAKE_C_COMPILER:PATH="/opt/compiler-explorer/gcc-${GCC_VERSION}/bin/gcc" \
+    -DCMAKE_CXX_COMPILER:PATH="/opt/compiler-explorer/gcc-${GCC_VERSION}/bin/g++" \
+    -DLLVM_BINUTILS_INCDIR:PATH="/opt/compiler-explorer/gcc-${GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${GCC_VERSION}/plugin/include" \
     -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${LLVM_EXPERIMENTAL_TARGETS_TO_BUILD}" \
     -DLLVM_PARALLEL_LINK_JOBS=4 \
     "${CMAKE_EXTRA_ARGS[@]}"
