@@ -310,7 +310,7 @@ if [[ -n "${NINJA_TARGET_RUNTIMES}" ]]; then
     ninja "${NINJA_TARGET_RUNTIMES}"
 fi
 if [[ -n "${NINJA_EXTRA_TARGETS_NO_FAIL}" ]]; then
-    ninja -k0 "${NINJA_EXTRA_TARGETS_NO_FAIL[@]}"
+    ninja -k0 "${NINJA_EXTRA_TARGETS_NO_FAIL[@]}" || true
 fi
 
 # Don't try to compress the binaries as they don't like it
