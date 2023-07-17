@@ -141,8 +141,6 @@ llvm-*)
     if [[ "${VERSION}" == "trunk" ]]; then
         BRANCH=main
         VERSION=trunk-$(date +%Y%m%d)
-        CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On")
-        LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;SPIRV"
     else
         TAG=llvmorg-${VERSION}
     fi
@@ -216,7 +214,8 @@ mlir-*)
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
         else
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
-            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;SPIRV;M68k;WebAssembly"
+            CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On")
         fi
         ;;
     esac
