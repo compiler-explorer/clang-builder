@@ -2,6 +2,7 @@
 ARG image
 FROM ubuntu:${image}
 LABEL MAINTAINER Matt Godbolt <matt@godbolt.org>
+ARG image # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
@@ -19,7 +20,6 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     make \
     ninja-build \
     patch \
-    python-is-python3 \
     python3 \
     python3-dev \
     subversion \
@@ -29,6 +29,7 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     xz-utils \
     zlib1g-dev
 
+RUN bash -c "if [[ ${image} == 18.04 ]]; then apt install -y -q python; else apt install -y -q python-is-python3; fi"
 
 WORKDIR /root
 
