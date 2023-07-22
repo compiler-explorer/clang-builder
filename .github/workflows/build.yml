@@ -28,8 +28,8 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
-        tags: compilerexplorer/clang${{ matrix.suffix }}-builder-builder:latest
-        cache-from: type=registry,ref=compilerexplorer/clang{{ matrix.suffix }}-builder$:latest
+        tags: compilerexplorer/clang${{ matrix.suffix }}-builder:latest
+        cache-from: type=registry,ref=compilerexplorer/clang${{ matrix.suffix }}-builder:latest
         cache-to: type=inline,mode=max
         file: Dockerfile
         build-args: image=${{ matrix.image }}
