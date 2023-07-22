@@ -5,6 +5,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+        - image: 22.04
+          suffix:
+        - image: 20.04
+          suffix: -20.04
+          # Some older clangs (<10) needs to be an older glibc, as comes with 18.04 in order to build 9.* and earlier.
+          # otherwise we somehow need to apply 947f9692440836dcb8d88b74b69dd379d85974ce to get the sanitizer
+          # to build.
     steps:
     - name: Docker Setup Buildx
       uses: docker/setup-buildx-action@v2
@@ -18,8 +28,10 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
-        tags: compilerexplorer/clang-builder:latest
-        cache-from: type=registry,ref=compilerexplorer/clang-builder:latest
+        tags: compilerexplorer/clang${{ matrix.suffix }}-builder-builder:latest
+        cache-from: type=registry,ref=compilerexplorer/clang{{ matrix.suffix }}-builder$:latest
         cache-to: type=inline,mode=max
+        file: Dockerfile
+        build-args: image=${{ matrix.image }}
     - name: Docker Hub Image Digest
       run: echo ${{ steps.hub_build.outputs.digest }}
