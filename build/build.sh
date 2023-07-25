@@ -196,10 +196,13 @@ mlir-*)
 
         # Enable libunwind (useful for assertion builds but seemingly useful even if not)
         if [[ $MAJOR -lt 6 ]]; then
+            # use older GCCs for 5 and earlier
+            GCC_VERSION=5.5.0
             LLVM_ENABLE_PROJECTS+=";libunwind"
         else
             LLVM_ENABLE_RUNTIMES+=";libunwind"
         fi
+
 
         # Patch debug output for clangs 10+
         if [[ $MAJOR -lt 10 ]]; then
