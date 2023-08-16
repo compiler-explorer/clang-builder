@@ -99,7 +99,7 @@ patmat-trunk)
     VERSION=patmat-trunk-$(date +%Y%m%d)
     ;;
 clangir-trunk)
-    BRANCH=llvmorg-master-pattern-matching
+    BRANCH=main
     URL=https://github.com/llvm/clangir.git
     VERSION=clangir-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_PROJECTS="clang;mlir;cir"
