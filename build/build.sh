@@ -98,6 +98,13 @@ patmat-trunk)
     URL=https://github.com/bcardosolopes/llvm-project.git
     VERSION=patmat-trunk-$(date +%Y%m%d)
     ;;
+clangir-trunk)
+    BRANCH=llvmorg-master-pattern-matching
+    URL=https://github.com/llvm/clangir.git
+    VERSION=clangir-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_PROJECTS="clang;mlir;cir"
+    CMAKE_EXTRA_ARGS+=( "-DLLVM_ENABLE_ASSERTIONS=ON" "-DLLVM_TARGETS_TO_BUILD=X86;AArch64;ARM")
+    ;;
 reflection-trunk)
     BRANCH=reflection
     URL=https://github.com/matus-chochlik/llvm-project.git
