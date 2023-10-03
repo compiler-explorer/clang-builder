@@ -110,6 +110,11 @@ reflection-trunk)
     URL=https://github.com/matus-chochlik/llvm-project.git
     VERSION=reflection-trunk-$(date +%Y%m%d)
     ;;
+variadic-friends-trunk)
+    BRANCH=cxx-variadic-friends
+    URL=https://github.com/dancrn/llvm-project.git
+    VERSION=variadic-friends-$(date +%Y%m%d)
+    ;;
 rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
         BRANCH=amd-stg-open
