@@ -113,7 +113,7 @@ reflection-trunk)
 variadic-friends-trunk)
     BRANCH=cxx-variadic-friends
     URL=https://github.com/dancrn/llvm-project.git
-    VERSION=variadic-friends-$(date +%Y%m%d)
+    VERSION=variadic-friends-trunk-$(date +%Y%m%d)
     ;;
 rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
