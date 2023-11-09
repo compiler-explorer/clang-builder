@@ -183,7 +183,7 @@ mlir-*)
         BRANCH=main
         VERSION=trunk-$(date +%Y%m%d)
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
-        LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;SPIRV"
+        LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;SPIRV;M68k"
         CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On")
         ;;
     assertions-trunk)
