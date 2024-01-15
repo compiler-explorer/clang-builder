@@ -29,6 +29,7 @@ autonsdmi-trunk)
     URL=https://github.com/cor3ntin/llvm-project.git
     VERSION=autonsdmi-trunk-$(date +%Y%m%d)
     CMAKE_EXTRA_ARGS+=("-DLLVM_OPTIMIZED_TABLEGEN=ON")
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 cppx-trunk)
     BRANCH=compiler-explorer
@@ -187,6 +188,7 @@ mlir-*)
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
         LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;SPIRV;M68k"
         CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On")
+        LLVM_ENABLE_RUNTIMES+=";libunwind"
         ;;
     assertions-trunk)
         BRANCH=main
