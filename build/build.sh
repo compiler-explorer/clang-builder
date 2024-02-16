@@ -95,6 +95,7 @@ relocatable-trunk)
     BRANCH=trivially-relocatable
     URL=https://github.com/Quuxplusone/llvm-project.git
     VERSION=relocatable-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 patmat-trunk)
     BRANCH=llvmorg-master-pattern-matching
