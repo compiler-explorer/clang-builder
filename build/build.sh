@@ -188,13 +188,13 @@ mlir-*)
         VERSION=trunk-$(date +%Y%m%d)
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
         LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;SPIRV;M68k"
-        CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On")
+        CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On" "-DLIBCXX_INSTALL_MODULES=ON")
         LLVM_ENABLE_RUNTIMES+=";libunwind"
         ;;
     assertions-trunk)
         BRANCH=main
         VERSION=assertions-trunk-$(date +%Y%m%d)
-        CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
+        CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON" "-DLIBCXX_INSTALL_MODULES=ON")
         LLVM_ENABLE_RUNTIMES+=";libunwind"
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
         ;;
@@ -237,6 +237,10 @@ mlir-*)
         else
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
+        fi
+
+        if [[ $MAJOR -ge 18 ]]; then
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_INSTALL_MODULES=ON")
         fi
         ;;
     esac
