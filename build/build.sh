@@ -119,6 +119,11 @@ variadic-friends-trunk)
     URL=https://github.com/dancrn/llvm-project.git
     VERSION=variadic-friends-trunk-$(date +%Y%m%d)
     ;;
+bb-p2996-trunk)
+    BRANCH=p2996
+    URL=https://github.com/Bloomberg/clang-p2996
+    VERSION=bb-p2996-trunk-$(date +%Y%m%d)
+    ;;
 rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
         BRANCH=amd-stg-open
