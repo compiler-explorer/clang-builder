@@ -123,6 +123,7 @@ bb-p2996-trunk)
     BRANCH=p2996
     URL=https://github.com/Bloomberg/clang-p2996
     VERSION=bb-p2996-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
