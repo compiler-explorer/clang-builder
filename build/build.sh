@@ -197,6 +197,14 @@ mlir-*)
         CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On" "-DLIBCXX_INSTALL_MODULES=ON")
         LLVM_ENABLE_RUNTIMES+=";libunwind"
         ;;
+    trunkaarch64)
+        BRANCH=main
+        VERSION=trunk-aarch64-$(date +%Y%m%d)
+        PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
+        LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=""
+        CMAKE_EXTRA_ARGS+=("-DLIBCXX_INSTALL_MODULES=ON -DLLVM_TARGETS_TO_BUILD=AArch64")
+        LLVM_ENABLE_RUNTIMES+=";libunwind"
+        ;;
     assertions-trunk)
         BRANCH=main
         VERSION=assertions-trunk-$(date +%Y%m%d)
