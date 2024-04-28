@@ -107,6 +107,7 @@ clangir-trunk)
     URL=https://github.com/llvm/clangir.git
     VERSION=clangir-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_PROJECTS="clang;mlir"
+    LLVM_ENABLE_RUNTIMES="libunwind;libcxx;libcxxabi"
     CMAKE_EXTRA_ARGS+=( "-DCLANG_ENABLE_CIR=ON" "-DLLVM_ENABLE_ASSERTIONS=ON" "-DLLVM_TARGETS_TO_BUILD=X86;AArch64;ARM")
     ;;
 reflection-trunk)
