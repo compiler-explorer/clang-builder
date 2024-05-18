@@ -126,6 +126,12 @@ bb-p2996-trunk)
     VERSION=bb-p2996-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3068-trunk)
+    BRANCH=P3068-constexpr-exceptions
+    URL=https://github.com/hanickadot/llvm-project
+    VERSION=p3068-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
         BRANCH=amd-stg-open
