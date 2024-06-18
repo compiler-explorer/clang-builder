@@ -140,17 +140,29 @@ dascandy-contracts-trunk)
     ;;
 rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
-        BRANCH=amd-stg-open
-        ROCM_DEVICE_LIBS_BRANCH=${BRANCH}
+        BRANCH=amd-stging
         VERSION=rocm-trunk-$(date +%Y%m%d)
+        CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=1")
+        ROCM_VERSION=999999 # trunk builds are "infinitely" far into the future
     else
         TAG=${VERSION}
-        ROCM_DEVICE_LIBS_BRANCH=${VERSION}
+        if [[ "${VERSION}" =~ rocm-([0-9]+)\.([0-9]+)\.[^.]+ ]]; then
+            x=${BASH_REMATCH[1]}
+            y=${BASH_REMATCH[2]}
+            ROCM_VERSION=$(( x * 100 + y ))
+        fi
     fi
-
-    URL=https://github.com/RadeonOpenCompute/llvm-project.git
-    ROCM_DEVICE_LIBS_URL=https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
-
+    if (( ROCM_VERSION < 601 )); then
+        ROCM_DEVICE_LIBS_BRANCH=${VERSION}
+        ROCM_DEVICE_LIBS_URL=https://github.com/ROCm/ROCm-Device-Libs.git
+    else
+        CMAKE_EXTRA_ARGS+=(
+            "-DLLVM_EXTERNAL_PROJECTS=device-libs;comgr"
+            "-DLLVM_EXTERNAL_DEVICE_LIBS_SOURCE_DIR=${ROOT}/llvm-project/amd/device-libs"
+            "-DLLVM_EXTERNAL_COMGR_SOURCE_DIR=${ROOT}/llvm-project/amd/comgr"
+        )
+    fi
+    URL=https://github.com/ROCm/llvm-project.git
     LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt"
     CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
     ;;
