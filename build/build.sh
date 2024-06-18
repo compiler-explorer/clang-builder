@@ -139,11 +139,11 @@ dascandy-contracts-trunk)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 rocm-*)
-    ROCM_VERSION=9999
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
         BRANCH=amd-stging
         VERSION=rocm-trunk-$(date +%Y%m%d)
         CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=1")
+        ROCM_VERSION=999999 # trunk builds are "infinitely" far into the future
     else
         TAG=${VERSION}
         if [[ "${VERSION}" =~ rocm-([0-9]+)\.([0-9]+)\.[^.]+ ]]; then
