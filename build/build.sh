@@ -143,6 +143,7 @@ p1974-trunk)
     URL=https://github.com/je4d/llvm-project
     VERSION=p1974-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
         BRANCH=amd-staging
