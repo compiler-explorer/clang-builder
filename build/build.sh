@@ -9,7 +9,7 @@ GCC_VERSION=9.2.0
 declare -a CMAKE_EXTRA_ARGS
 declare -a NINJA_EXTRA_TARGETS
 declare -a NINJA_EXTRA_TARGETS_NO_FAIL
-LLVM_ENABLE_PROJECTS="clang;"
+LLVM_ENABLE_PROJECTS="clang"
 LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"
 LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=
 BASENAME=clang
@@ -95,7 +95,8 @@ relocatable-trunk)
     BRANCH=trivially-relocatable
     URL=https://github.com/Quuxplusone/llvm-project.git
     VERSION=relocatable-trunk-$(date +%Y%m%d)
-    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    LLVM_ENABLE_PROJECTS="clang"
+    LLVM_ENABLE_RUNTIMES="compiler-rt;libcxx;libcxxabi;libunwind"
     ;;
 patmat-trunk)
     BRANCH=llvmorg-master-pattern-matching
