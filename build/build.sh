@@ -133,6 +133,12 @@ p3068-trunk)
     VERSION=p3068-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3309-trunk)
+    BRANCH=P3309-constexpr-atomic-and-atomic-ref
+    URL=https://github.com/hanickadot/llvm-project
+    VERSION=p3309-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 dascandy-contracts-trunk)
     BRANCH=add-contracts
     URL=https://github.com/dascandy/llvm-project
