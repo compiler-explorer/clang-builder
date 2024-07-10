@@ -145,6 +145,12 @@ dascandy-contracts-trunk)
     VERSION=dascandy-contracts-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+ericwf-contracts-trunk)
+    BRANCH=contracts-nightly
+    URL=https://github.com/efcs/llvm-project
+    VERSION=ericwf-contracts-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+="libcxx;libcxxabi;libunwind"
+    ;;
 p1974-trunk)
     BRANCH=godbolt/propconst
     URL=https://github.com/je4d/llvm-project
