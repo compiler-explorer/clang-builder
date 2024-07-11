@@ -149,7 +149,7 @@ ericwf-contracts-trunk)
     BRANCH=contracts-nightly
     URL=https://github.com/efcs/llvm-project
     VERSION=ericwf-contracts-trunk-$(date +%Y%m%d)
-    LLVM_ENABLE_RUNTIMES+=";libcxx;libcxxabi;libunwind"
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 p1974-trunk)
     BRANCH=godbolt/propconst
