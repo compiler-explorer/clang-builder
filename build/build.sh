@@ -142,7 +142,7 @@ p3309-trunk)
 p3367-trunk)
     BRANCH=P3367-constexpr-coroutines
     URL=https://github.com/hanickadot/llvm-project
-    VERSION=p3309-trunk-$(date +%Y%m%d)
+    VERSION=p3367-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 dascandy-contracts-trunk)
