@@ -50,6 +50,7 @@ p1061-trunk)
     BRANCH=ricejasonf/p1061
     URL=https://github.com/ricejasonf/llvm-project.git
     VERSION=p1061-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 embed-trunk)
     BRANCH=feature/embed
