@@ -146,6 +146,12 @@ p3367-trunk)
     VERSION=p3367-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3372-trunk)
+    BRANCH=P3372-constexpr-containers-and-adaptors
+    URL=https://github.com/hanickadot/llvm-project
+    VERSION=p3372-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 dascandy-contracts-trunk)
     BRANCH=add-contracts
     URL=https://github.com/dascandy/llvm-project
