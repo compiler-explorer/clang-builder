@@ -382,6 +382,8 @@ if [[ -n "${ROCM_DEVICE_LIBS_URL}" ]]; then
     git clone --depth 1 --single-branch -b "${ROCM_DEVICE_LIBS_BRANCH}" "${ROCM_DEVICE_LIBS_URL}" "${ROOT}/llvm-project/llvm/projects/Device-Libs"
 fi
 
+df -h /
+
 # Setup build directory and build configuration
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
