@@ -101,8 +101,8 @@ relocatable-trunk)
     LLVM_ENABLE_RUNTIMES="compiler-rt;libcxx;libcxxabi;libunwind"
     ;;
 patmat-trunk)
-    BRANCH=llvmorg-master-pattern-matching
-    URL=https://github.com/bcardosolopes/llvm-project.git
+    BRANCH=p2688-pattern-matching
+    URL=https://github.com/mpark/llvm-project
     VERSION=patmat-trunk-$(date +%Y%m%d)
     ;;
 clangir-trunk)
