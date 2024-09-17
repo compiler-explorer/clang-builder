@@ -104,6 +104,7 @@ patmat-trunk)
     BRANCH=p2688-pattern-matching
     URL=https://github.com/mpark/llvm-project
     VERSION=patmat-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 clangir-trunk)
     BRANCH=main
