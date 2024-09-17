@@ -1,7 +1,6 @@
-
-ARG image
+ARG image=20.04
 FROM ubuntu:${image}
-LABEL MAINTAINER Matt Godbolt <matt@godbolt.org>
+LABEL maintainer="Matt Godbolt <matt@godbolt.org>"
 ARG image # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 
 ARG DEBIAN_FRONTEND=noninteractive
