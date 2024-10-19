@@ -154,6 +154,12 @@ p3372-trunk)
     VERSION=p3372-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3412-trunk)
+    BRANCH=f-literals
+    URL=https://github.com/BengtGustafsson/llvm-project-UTP.git
+    VERSION=p3412-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 dascandy-contracts-trunk)
     BRANCH=add-contracts
     URL=https://github.com/dascandy/llvm-project
