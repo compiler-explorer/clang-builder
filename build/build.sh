@@ -130,6 +130,12 @@ bb-p2996-trunk)
     VERSION=bb-p2996-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p2998-trunk)
+    BRANCH=p2998
+    URL=https://github.com/Bekenn/llvm-project
+    VERSION=p2998-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 p3068-trunk)
     BRANCH=P3068-constexpr-exceptions
     URL=https://github.com/hanickadot/llvm-project
