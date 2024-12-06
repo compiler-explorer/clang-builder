@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         include:
-        - image: 20.04
+        - image: 22.04
           suffix:
         - image: 18.04
           suffix: -18.04
