@@ -1,4 +1,4 @@
-ARG image=20.04
+ARG image=22.04
 FROM ubuntu:${image}
 LABEL maintainer="Matt Godbolt <matt@godbolt.org>"
 ARG image # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
