@@ -107,6 +107,8 @@ patmat-trunk)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 clangir-trunk)
+    # Does not compile with 9.2.0.
+    GCC_VERSION=14.2.0
     BRANCH=main
     URL=https://github.com/llvm/clangir.git
     VERSION=clangir-trunk-$(date +%Y%m%d)
