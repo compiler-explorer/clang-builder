@@ -187,6 +187,7 @@ p1974-trunk)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 chrisbazley-trunk)
+    BRANCH=main
     URL=https://github.com/chrisbazley/llvm-project.git
     VERSION=chrisbazley-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
