@@ -4,6 +4,7 @@ set -exo pipefail
 
 ROOT=$PWD
 VERSION=$1
+EXTERNAL_PROJECT_DIR=${ROOT}/external
 
 GCC_VERSION=9.2.0
 declare -a CMAKE_EXTRA_ARGS
@@ -17,6 +18,8 @@ NINJA_TARGET=install
 NINJA_TARGET_RUNTIMES=install-runtimes
 TAG=
 declare -a PATCHES_TO_APPLY
+declare -a EXTERNAL_PROJECT_URLS
+declare -a LLVM_EXTERNAL_PROJECTS_LIST
 
 case $VERSION in
 ce-trunk)
@@ -328,6 +331,12 @@ mlir-*)
         if [[ $MAJOR -ge 18 ]]; then
             CMAKE_EXTRA_ARGS+=("-DLIBCXX_INSTALL_MODULES=ON")
         fi
+
+        if [[ $MAJOR -eq 18 ]]; then
+            EXTERNAL_PROJECT_URLS+=("https://github.com/vgvassilev/clad.git")
+            LLVM_EXTERNAL_PROJECTS_LIST+=("clad")
+            CMAKE_EXTRA_ARGS+=("-DLLVM_EXTERNAL_CLAD_SOURCE_DIR=${EXTERNAL_PROJECT_DIR}/clad")
+        fi
         ;;
     esac
     ;;
@@ -377,6 +386,16 @@ for PATCH_TO_APPLY in "${PATCHES_TO_APPLY[@]}"; do
     git -C "${ROOT}/llvm-project" apply "${PATCH_TO_APPLY}" -v
 done
 
+# Setup external projects
+mkdir -p ${EXTERNAL_PROJECT_DIR}
+for I in "${!EXTERNAL_PROJECT_URLS[@]}"; do
+    git clone --depth 1 "${EXTERNAL_PROJECT_URLS[I]}" "${EXTERNAL_PROJECT_DIR}/${LLVM_EXTERNAL_PROJECTS_LIST[I]}"
+done
+LLVM_EXTERNAL_PROJECTS=
+for I in "${LLVM_EXTERNAL_PROJECTS_LIST}"; do
+    LLVM_EXTERNAL_PROJECTS+="${I};";
+done
+
 # For older LLVM versions, merge runtime and projects
 # August 2021 is when bootstrapping become necessary, bootstrapping might have been supported previously a few years prior
 COMMIT_DATE=$(cd "${ROOT}/llvm-project/llvm" && git show -s --format=%ct HEAD)
@@ -407,6 +426,7 @@ cmake \
     -G "Ninja" "${ROOT}/llvm-project/llvm" \
     -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
     -DLLVM_ENABLE_RUNTIMES="${LLVM_ENABLE_RUNTIMES}" \
+    -DLLVM_EXTERNAL_PROJECTS="${LLVM_EXTERNAL_PROJECTS}" \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH="${STAGING_DIR}" \
     -DCMAKE_C_COMPILER:PATH="/opt/compiler-explorer/gcc-${GCC_VERSION}/bin/gcc" \
