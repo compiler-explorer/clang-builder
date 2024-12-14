@@ -234,7 +234,7 @@ llvm-spirv)
     ;;
 llvm-*)
     BASENAME=llvm
-    NINJA_TARGET=install-llvm-headers
+    NINJA_TARGET="install-llvm-headers install-llvm-libraries"
     NINJA_TARGET_RUNTIMES=
     # strip prefix from front of version
     VERSION=${VERSION#llvm-}
