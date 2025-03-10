@@ -196,9 +196,7 @@ rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
         BRANCH=amd-staging
         VERSION=rocm-trunk-$(date +%Y%m%d)
-        CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=1")
         ROCM_VERSION=999999 # trunk builds are "infinitely" far into the future
-        LLVM_ENABLE_RUNTIMES+=";libunwind"
     else
         TAG=${VERSION}
         if [[ "${VERSION}" =~ rocm-([0-9]+)\.([0-9]+)\.[^.]+ ]]; then
@@ -212,8 +210,18 @@ rocm-*)
         ROCM_DEVICE_LIBS_URL=https://github.com/ROCm/ROCm-Device-Libs.git
     fi
     URL=https://github.com/ROCm/llvm-project.git
-    LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt"
     CMAKE_EXTRA_ARGS+=("-DLLVM_TARGETS_TO_BUILD=AMDGPU;X86")
+
+    if (( ROCM_VERSION < 602 )); then
+        LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra;compiler-rt"
+    else
+        # Does not compile with 9.2
+        GCC_VERSION=9.4.0
+        LLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra"
+        LLVM_ENABLE_RUNTIMES+=";libunwind;compiler-rt"
+        CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=1")
+    fi
+
     ROCM_PATCH="${ROOT}/patches/ce-clang-${VERSION}.patch"
     if [[ -e "$ROCM_PATCH" ]]; then
         PATCHES_TO_APPLY+=("$ROCM_PATCH")
