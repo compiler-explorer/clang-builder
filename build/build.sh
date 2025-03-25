@@ -23,6 +23,8 @@ ce-trunk)
     BRANCH=dbg-to-stdout
     URL=https://github.com/compiler-explorer/llvm-project.git
     VERSION=ce-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_PROJECTS+=";pstl"
+    CMAKE_EXTRA_ARGS+=("-DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=ON")
     ;;
 autonsdmi-trunk)
     BRANCH=experiments
