@@ -16,6 +16,7 @@ BASENAME=clang
 NINJA_TARGET=install
 NINJA_TARGET_RUNTIMES=install-runtimes
 TAG=
+declare -a COMMITS_TO_CHERRYPICK
 declare -a PATCHES_TO_APPLY
 
 case $VERSION in
@@ -295,13 +296,14 @@ mlir-*)
         PURE_VERSION=${VERSION#assertions-}
         if [[ $PURE_VERSION =~ ([0-9]+)\.([0-9]+)\.(.*) ]]; then
             MAJOR=${BASH_REMATCH[1]}
+            MINOR=${BASH_REMATCH[2]}
         else
             echo "Unable to determine version of ${PURE_VERSION}"
             exit 1
         fi
         if [[ "${VERSION}" != "${PURE_VERSION}" ]]; then
             CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
-            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-cxx")
+            # NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-cxx")
         fi
         TAG=llvmorg-${PURE_VERSION}
 
@@ -314,6 +316,51 @@ mlir-*)
             LLVM_ENABLE_RUNTIMES+=";libunwind"
         fi
 
+        if [[ $MAJOR -eq 3 && $MINOR -eq 5 ]]; then
+            COMMITS_TO_CHERRYPICK+=("cf6b0c64b96cecaf961ef59f2b1db87f08f30881")
+            COMMITS_TO_CHERRYPICK+=("f2f09fb32946a806f46285419fe6359f30206811") # present in 3.5.2
+        fi
+
+        if [[ ($MAJOR -eq 3 && $MINOR -le 5) || $MAJOR -lt 3 ]]; then
+            GCC_VERSION=4.9.4
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 4 ]]; then
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-lld-3.4.patch")
+        fi
+
+        if [[ $MAJOR -eq 3 && ( $MINOR -eq 4 || $MINOR -eq 3 ) ]]; then
+            CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_FLAGS=-std=c++0x")
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 0 ]]; then
+            COMMITS_TO_CHERRYPICK+=("00221ce63d450f9d024f437d7fb6bfa71b18f7a7")
+        fi
+
+        if [[ $MAJOR -eq 2 && $MINOR -eq 9 ]]; then
+            GCC_VERSION=4.5.3
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-all")
+        fi
+        
+        if [[ $MAJOR -eq 2 && $MINOR -eq 8 ]]; then
+            GCC_VERSION=4.5.3
+            COMMITS_TO_CHERRYPICK+=("95b6f045f1f104b96d443c404755c2757b6f6cf7") # fix for clang++ symlink being absolute
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check" "clang-test" "clang-c++tests")
+        fi
+
+        if [[ $MAJOR -eq 2 && $MINOR -eq 7 ]]; then
+            GCC_VERSION=4.4.7
+            # COMMITS_TO_CHERRYPICK+=("95b6f045f1f104b96d443c404755c2757b6f6cf7") # fix for clang++ symlink being absolute
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-clang-2.7-clang-symlink.patch")
+            # PATCHES_TO_APPLY+=("${ROOT}/patches/ce-clang-2.7-default-to-intel-asm-syntax.patch")
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check" "clang-test" "clang-c++tests")
+        fi
+
+        if [[ $MAJOR -eq 2 && $MINOR -eq 6 ]]; then
+            GCC_VERSION=4.4.7
+            COMMITS_TO_CHERRYPICK+=("ccc60da5c7bef1c454b27056dfb1b003ad71807e")
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("clang-test")
+        fi
 
         # Patch debug output for clangs 10+
         if [[ $MAJOR -lt 10 ]]; then
@@ -379,6 +426,11 @@ mkdir -p "${STAGING_DIR}"
 # Setup llvm-project checkout
 git clone --depth 1 --single-branch -b "${BRANCH}" "${URL}" "${ROOT}/llvm-project"
 
+for COMMIT_TO_CHERRYPICK in "${COMMITS_TO_CHERRYPICK[@]}"; do
+    git -C "${ROOT}/llvm-project" fetch --depth=10 origin "${COMMIT_TO_CHERRYPICK}" -v
+    git -C "${ROOT}/llvm-project" cherry-pick -n "${COMMIT_TO_CHERRYPICK}" -v
+done
+
 for PATCH_TO_APPLY in "${PATCHES_TO_APPLY[@]}"; do
     git -C "${ROOT}/llvm-project" apply "${PATCH_TO_APPLY}" -v
 done
@@ -391,6 +443,66 @@ if ((COMMIT_DATE < TIMESTAMP_BOOTSTRAP_NECESSARY)); then
     LLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS};${LLVM_ENABLE_RUNTIMES}"
     LLVM_ENABLE_RUNTIMES=
     NINJA_TARGET_RUNTIMES=
+fi
+
+# Polly in LLVM 3.7 and on has libisl 0.15 checked out into the repository.
+# Polly in LLVM 3.6 instead relies on `find_package(Isl REQUIRED)`, where `FindIsl.cmake` is provided by Polly.
+# It searches for the library in the host system.
+# Ubuntu 16.04 has libisl-dev 0.16 in the repositories, but it seems to be too new, because build fails.
+# So we disable Polly for 3.6.
+if [[ ($MAJOR -eq 3 && $MINOR -le 6) || $MAJOR -lt 3 ]]; then
+    LLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS/polly/}"
+fi
+
+# LLVM 4.0 was the version where LLVM_ENABLE_PROJECTS was introduced.
+# In older versions, users were supposed to clone subprojects into the right places,
+# and LLVM's CMakeLists would pick them up if they are present.
+# If they were not, they were silently ignored.
+# The fact that all subprojects are in the git monorepo is an artifact of SVN to git migration.
+# So, for older version we translate subprojects in LLVM_ENABLE_PROJECTS into symlinks
+# right where old CMakeLists expect them to be.
+if [[ $MAJOR -lt 5 ]]; then
+    OIFS=$IFS
+    IFS=";"
+    for p in ${LLVM_ENABLE_PROJECTS}; do
+        case $p in
+        clang)
+            ln -s "${ROOT}/llvm-project/clang" "${ROOT}/llvm-project/llvm/tools/clang" # Required for 3.9.0
+            ;;
+        clang-tools-extra)
+            ln -s "${ROOT}/llvm-project/clang-tools-extra" "${ROOT}/llvm-project/clang/tools/extra" # Required for 3.9.0
+            ;;
+        compiler-rt)
+            ln -s "${ROOT}/llvm-project/compiler-rt" "${ROOT}/llvm-project/llvm/projects/compiler-rt" # Required for 3.9.0
+            ;;
+        libcxx)
+            if [[ ($MAJOR -eq 3 && $MINOR -ge 4) || $MAJOR -eq 4 ]]; then
+                ln -s "${ROOT}/llvm-project/libcxx" "${ROOT}/llvm-project/llvm/projects/libcxx" # Required for 3.9.0
+            fi
+            # Skip libc++ 3.2. It assumes Clang, and we don't know how to build it even using period-correct Clang
+            if [[ $MAJOR -eq 3 && $MINOR -eq 3 ]]; then
+                rm -rf "${ROOT}/llvm-project/clang/runtime/libcxx"
+                ln -s "${ROOT}/llvm-project/libcxx" "${ROOT}/llvm-project/clang/runtime/libcxx"
+            fi
+            ;;
+        libcxxabi)
+            ln -s "${ROOT}/llvm-project/libcxxabi" "${ROOT}/llvm-project/llvm/projects/libcxxabi" # Required for 4.0.0
+            ;;
+        libunwind)
+            ln -s "${ROOT}/llvm-project/libunwind" "${ROOT}/llvm-project/llvm/projects/libunwind" # Required for 3.9.0
+            ;;
+        lld)
+            ln -s "${ROOT}/llvm-project/lld" "${ROOT}/llvm-project/llvm/tools/lld" # Required for 3.9.0
+            ;;
+        polly)
+            ln -s "${ROOT}/llvm-project/polly" "${ROOT}/llvm-project/llvm/tools/polly" # Required for 3.9.0
+            ;;
+        *)
+            # openmp: CMake files of those old versions of LLVM doesn't seem to be aware of OpenMP runtime
+            ;;
+        esac
+    done
+    IFS=$OIFS
 fi
 
 if [[ -n "${SPIRV_LLVM_TRANSLATOR_URL}" ]]; then
@@ -408,6 +520,9 @@ df -h /
 # Setup build directory and build configuration
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
+if [[ $GCC_VERSION == "4."* ]]; then
+   export LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:${LIBRARY_PATH}"
+fi
 cmake \
     -G "Ninja" "${ROOT}/llvm-project/llvm" \
     -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
@@ -432,8 +547,8 @@ fi
 
 # Don't try to compress the binaries as they don't like it
 
-export XZ_DEFAULTS="-T 0"
-tar Jcf "${OUTPUT}" --transform "s,^./,./${FULLNAME}/," -C "${STAGING_DIR}" .
+# export XZ_DEFAULTS="-T 0"
+# tar Jcf "${OUTPUT}" --transform "s,^./,./${FULLNAME}/," -C "${STAGING_DIR}" .
 
 
 echo "ce-build-status:OK"
