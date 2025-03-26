@@ -368,6 +368,8 @@ mlir-*)
 
         if [[ $MAJOR -eq 3 && $MINOR -eq 4 ]]; then
             GCC_VERSION=4.8.5
+            COMMITS_TO_CHERRYPICK+=("1d1b46cdf71bec1d95ca8a4665990972bd34bfc7") # "Make locales (and transitively, std::endl) work reliably with gcc."
+            COMMITS_TO_CHERRYPICK+=("9e3548875a9fe7e959de608d3c279f1fe6c4594a") # "Add a _LIBCPP_CONSTEXPR that was missed in r170026."
             COMMITS_TO_CHERRYPICK+=("5a3d898758ed87f5d58e92d3ecdb75b567b059d6") # fix for -stdlib=libc++ header search paths
             COMMITS_TO_CHERRYPICK+=("902efc61be719775ccb15cb95ce6c2e79566dd5e") # fix for -stdlib=libc++ linker search paths
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-lld-3.4-missing-targets.patch")
@@ -379,6 +381,8 @@ mlir-*)
 
         if [[ $MAJOR -eq 3 && $MINOR -eq 3 ]]; then
             GCC_VERSION=4.8.5
+            COMMITS_TO_CHERRYPICK+=("1d1b46cdf71bec1d95ca8a4665990972bd34bfc7") # "Make locales (and transitively, std::endl) work reliably with gcc."
+            COMMITS_TO_CHERRYPICK+=("9e3548875a9fe7e959de608d3c279f1fe6c4594a") # "Add a _LIBCPP_CONSTEXPR that was missed in r170026."
             COMMITS_TO_CHERRYPICK+=("4806fcd6974cd47a505e2b3e599b9a34da1e9899") # fix for "can't find '__main__' module" in libc++ tests
             COMMITS_TO_CHERRYPICK+=("18595440712c33ff2459ba1b900ad3d6819d2ecb") # fix for libc++ tests that don't pass '-std=c++0x' to compiler
             COMMITS_TO_CHERRYPICK+=("902efc61be719775ccb15cb95ce6c2e79566dd5e") # fix for -stdlib=libc++ linker search paths
@@ -475,8 +479,6 @@ mkdir -p "${STAGING_DIR}"
 
 # Setup llvm-project checkout
 git clone --depth 1 --single-branch -b "${BRANCH}" "${URL}" "${ROOT}/llvm-project"
-# git -C "${ROOT}/llvm-project" fetch --depth=10 origin 02fd3ad24be953803499add517320d2b1e427db0 -v
-# git -C "${ROOT}/llvm-project" checkout 02fd3ad24be953803499add517320d2b1e427db0
 
 for COMMIT_TO_CHERRYPICK in "${COMMITS_TO_CHERRYPICK[@]}"; do
     # It was found out that --depth=1 is not enough sometimes,
@@ -614,7 +616,6 @@ for TARGET in "${NINJA_EXTRA_TARGETS_NO_FAIL[@]}"; do
     # So we need to make sure that tests are run with a rather low limit.
     # See https://github.com/python/cpython/issues/127177 for details.
     prlimit --nofile=1024:524288 ninja -k0 "${TARGET}" || true
-    true
 done
 
 if [[ $MAJOR -le 3 ]]; then
@@ -659,6 +660,7 @@ if [[ $MAJOR -le 3 ]]; then
     # Clang 2.9 can't find GCC, so it passes crtbegin.o and friends to ld using
     # relative paths, which is not supported.
     # Clang 2.7 can't compile hello world (even C one) because of codegen bugs.
+    # Clang 2.6 didn't officially support C++ at all.
 fi
 
 # Don't try to compress the binaries as they don't like it
