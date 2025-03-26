@@ -1,0 +1,21 @@
+Fix for 4814291e17ef501afa4c19ca43fbb52cfe49957c,
+which was a bad backport of 6fe361c1efc9e7c38c164fc6469857a84d3cb299
+"Remove use of _[A-Z] identifiers and poison them to detect usage"
+against release/3.6.x branch.
+
+diff --git a/libcxx/test/libcxx/test/config.py b/libcxx/test/libcxx/test/config.py
+index 55916f0da53e..4342a797abad 100644
+--- a/libcxx/test/libcxx/test/config.py
++++ b/libcxx/test/libcxx/test/config.py
+@@ -269,8 +269,8 @@ class Configuration(object):
+         # Configure include paths
+         self.compile_flags += ['-nostdinc++']
+         support_path = os.path.join(self.src_root, 'test/support')
+-        self.cxx.compile_flags += ['-I' + support_path]
+-        self.cxx.compile_flags += ['-include', os.path.join(support_path, 'nasty_macros.hpp')]
++        self.compile_flags += ['-I' + support_path]
++        self.compile_flags += ['-include', os.path.join(support_path, 'nasty_macros.hpp')]
+         libcxx_headers = self.get_lit_conf('libcxx_headers',
+                                            self.src_root + '/include')
+         if not os.path.isdir(libcxx_headers):
+ 
