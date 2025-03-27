@@ -28,7 +28,7 @@ RUN apt update -y -q && apt upgrade -y -q && apt update -y -q && \
     xz-utils \
     zlib1g-dev
 
-RUN bash -c "if [[ ${image} == 18.04 ]]; then apt install -y -q python; else apt install -y -q python-is-python3; fi"
+RUN bash -c "if [[ ${image} == 16.04 || ${image} == 18.04 ]]; then apt install -y -q python; else apt install -y -q python-is-python3; fi"
 
 WORKDIR /root
 
@@ -36,7 +36,7 @@ RUN curl -sL https://github.com/Kitware/CMake/releases/download/v3.26.3/cmake-3.
     | tar zxvf - -C /usr --strip-components=1
 
 # Workaround for older clangs that expect xlocale.h
-RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+RUN bash -c "if [[ ${image} != 16.04 ]]; then ln -s /usr/include/locale.h /usr/include/xlocale.h; fi"
 
 RUN mkdir -p /root
 COPY build /root/

@@ -16,6 +16,7 @@ BASENAME=clang
 NINJA_TARGET=install
 NINJA_TARGET_RUNTIMES=install-runtimes
 TAG=
+declare -a COMMITS_TO_CHERRYPICK
 declare -a PATCHES_TO_APPLY
 
 case $VERSION in
@@ -306,25 +307,24 @@ mlir-*)
         PURE_VERSION=${VERSION#assertions-}
         if [[ $PURE_VERSION =~ ([0-9]+)\.([0-9]+)\.(.*) ]]; then
             MAJOR=${BASH_REMATCH[1]}
+            MINOR=${BASH_REMATCH[2]}
         else
             echo "Unable to determine version of ${PURE_VERSION}"
             exit 1
         fi
         if [[ "${VERSION}" != "${PURE_VERSION}" ]]; then
             CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON")
-            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-cxx")
+            if [[ ($MAJOR -eq 3 && $MINOR -ge 8) || $MAJOR -ge 4 ]]; then
+                # Clang 3.7 and older specify set of testing targets separately
+                # for each version.
+                NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-cxx")
+            fi
         fi
         TAG=llvmorg-${PURE_VERSION}
 
-        # Enable libunwind (useful for assertion builds but seemingly useful even if not)
-        if [[ $MAJOR -lt 6 ]]; then
-            # use older GCCs for 5 and earlier
-            GCC_VERSION=5.5.0
-            LLVM_ENABLE_PROJECTS+=";libunwind"
-        else
-            LLVM_ENABLE_RUNTIMES+=";libunwind"
+        if [[ $MAJOR -ge 18 ]]; then
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_INSTALL_MODULES=ON")
         fi
-
 
         # Patch debug output for clangs 10+
         if [[ $MAJOR -lt 10 ]]; then
@@ -342,10 +342,111 @@ mlir-*)
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
         fi
 
-        if [[ $MAJOR -ge 18 ]]; then
-            CMAKE_EXTRA_ARGS+=("-DLIBCXX_INSTALL_MODULES=ON")
+        # Enable libunwind (useful for assertion builds but seemingly useful even if not)
+        if [[ $MAJOR -lt 6 ]]; then
+            # use older GCCs for 5 and earlier
+            GCC_VERSION=5.5.0
+            LLVM_ENABLE_PROJECTS+=";libunwind"
+        else
+            LLVM_ENABLE_RUNTIMES+=";libunwind"
         fi
-        ;;
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 7 ]]; then
+            GCC_VERSION=5.5.0
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-libcxx-3.7-linker-script.patch")
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON") # Link against libc++abi.so when linking against libc++.so
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-libcxx")
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 6 ]]; then
+            GCC_VERSION=4.9.4
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-libcxx-3.6-compile-flags.patch")
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-libcxx-3.6-linker-script.patch")
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON") # Link against libc++abi.so when linking against libc++.so
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-libcxx")
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 5 ]]; then
+            GCC_VERSION=4.9.4
+            COMMITS_TO_CHERRYPICK+=("cf6b0c64b96cecaf961ef59f2b1db87f08f30881") # __sync_swap fix
+            COMMITS_TO_CHERRYPICK+=("f2f09fb32946a806f46285419fe6359f30206811") # fix the lack of lld targets; present in 3.5.2
+            COMMITS_TO_CHERRYPICK+=("55d029e6ae67d173fd0fd218e62f9e359bb1bf34") # libc++: "Better defaults for in-tree libc++ with cmake."
+            COMMITS_TO_CHERRYPICK+=("9d7323eca38f6ad0722306713ab7c5df5cf43b38") # libc++: "Fix linking with just-built libc++abi"
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-libcxx-3.5-linker-script.patch")
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON") # Link against libc++abi.so when linking against libc++.so
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-libcxx")
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 4 ]]; then
+            GCC_VERSION=4.8.5
+            COMMITS_TO_CHERRYPICK+=("1d1b46cdf71bec1d95ca8a4665990972bd34bfc7") # "Make locales (and transitively, std::endl) work reliably with gcc."
+            COMMITS_TO_CHERRYPICK+=("9e3548875a9fe7e959de608d3c279f1fe6c4594a") # "Add a _LIBCPP_CONSTEXPR that was missed in r170026."
+            COMMITS_TO_CHERRYPICK+=("5a3d898758ed87f5d58e92d3ecdb75b567b059d6") # fix for -stdlib=libc++ header search paths
+            COMMITS_TO_CHERRYPICK+=("902efc61be719775ccb15cb95ce6c2e79566dd5e") # fix for -stdlib=libc++ linker search paths
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-lld-3.4-missing-targets.patch")
+            CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_FLAGS=-std=c++0x")
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_CXX_ABI=libsupc++") # Make libc++ link against libsupc++, so that users don't have to
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_LIBSUPCXX_INCLUDE_PATHS=/opt/compiler-explorer/gcc-${GCC_VERSION}/include/c++/${GCC_VERSION};/opt/compiler-explorer/gcc-${GCC_VERSION}/include/c++/${GCC_VERSION}/x86_64-linux-gnu/")
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-libcxx")
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 3 ]]; then
+            GCC_VERSION=4.8.5
+            COMMITS_TO_CHERRYPICK+=("1d1b46cdf71bec1d95ca8a4665990972bd34bfc7") # "Make locales (and transitively, std::endl) work reliably with gcc."
+            COMMITS_TO_CHERRYPICK+=("9e3548875a9fe7e959de608d3c279f1fe6c4594a") # "Add a _LIBCPP_CONSTEXPR that was missed in r170026."
+            COMMITS_TO_CHERRYPICK+=("4806fcd6974cd47a505e2b3e599b9a34da1e9899") # fix for "can't find '__main__' module" in libc++ tests
+            COMMITS_TO_CHERRYPICK+=("18595440712c33ff2459ba1b900ad3d6819d2ecb") # fix for libc++ tests that don't pass '-std=c++0x' to compiler
+            COMMITS_TO_CHERRYPICK+=("902efc61be719775ccb15cb95ce6c2e79566dd5e") # fix for -stdlib=libc++ linker search paths
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-clang-3.3-libcxx-header-search-paths.patch")
+            CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_FLAGS=-std=c++0x")
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_CXX_ABI=libsupc++") # Make libc++ link against libsupc++, so that users don't have to
+            CMAKE_EXTRA_ARGS+=("-DLIBCXX_LIBSUPCXX_INCLUDE_PATHS=/opt/compiler-explorer/gcc-${GCC_VERSION}/include/c++/${GCC_VERSION};/opt/compiler-explorer/gcc-${GCC_VERSION}/include/c++/${GCC_VERSION}/x86_64-linux-gnu/")
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang" "check-libcxx")
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 2 ]]; then
+            GCC_VERSION=4.4.7
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check-llvm" "check-clang")
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 1 ]]; then
+            GCC_VERSION=4.4.7
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check" "clang-test")
+        fi
+
+        if [[ $MAJOR -eq 3 && $MINOR -eq 0 ]]; then
+            GCC_VERSION=4.4.7
+            COMMITS_TO_CHERRYPICK+=("00221ce63d450f9d024f437d7fb6bfa71b18f7a7") # exportsfile fix
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check" "clang-test")
+        fi
+
+        if [[ $MAJOR -eq 2 && $MINOR -eq 9 ]]; then
+            GCC_VERSION=4.5.3
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check" "clang-test")
+        fi
+        
+        if [[ $MAJOR -eq 2 && $MINOR -eq 8 ]]; then
+            GCC_VERSION=4.5.3
+            COMMITS_TO_CHERRYPICK+=("95b6f045f1f104b96d443c404755c2757b6f6cf7") # fix for clang++ symlink being absolute
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-llvm-2.8-disable-cast-fp-test.patch") # cast-fp.ll takes 98 GB of RAM and 4 minutes to fail
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("check" "clang-test")
+        fi
+
+        if [[ $MAJOR -eq 2 && $MINOR -eq 7 ]]; then
+            GCC_VERSION=4.4.7
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-clang-2.7-clang-symlink.patch")
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-clang-2.7-default-to-intel-asm-syntax.patch")
+            # Not adding LLVM tests ("check" target), because they expect AT&T syntax.
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("clang-test")
+        fi
+
+        if [[ $MAJOR -eq 2 && $MINOR -eq 6 ]]; then
+            GCC_VERSION=4.4.7
+            COMMITS_TO_CHERRYPICK+=("ccc60da5c7bef1c454b27056dfb1b003ad71807e") # enable Clang frontend for C++ and ObjC inputs
+            # Not adding LLVM tests ("check" target), because they are not available via CMake.
+            NINJA_EXTRA_TARGETS_NO_FAIL+=("clang-test")
+        fi
+        ;; 
     esac
     ;;
 esac
@@ -390,6 +491,13 @@ mkdir -p "${STAGING_DIR}"
 # Setup llvm-project checkout
 git clone --depth 1 --single-branch -b "${BRANCH}" "${URL}" "${ROOT}/llvm-project"
 
+for COMMIT_TO_CHERRYPICK in "${COMMITS_TO_CHERRYPICK[@]}"; do
+    # It was found out that --depth=1 is not enough sometimes,
+    # so fetching with --depth=10 to ensure that cherry-pick succeeds.
+    git -C "${ROOT}/llvm-project" fetch --depth=10 origin "${COMMIT_TO_CHERRYPICK}" -v
+    git -C "${ROOT}/llvm-project" cherry-pick -n "${COMMIT_TO_CHERRYPICK}" -v
+done
+
 for PATCH_TO_APPLY in "${PATCHES_TO_APPLY[@]}"; do
     git -C "${ROOT}/llvm-project" apply "${PATCH_TO_APPLY}" -v
 done
@@ -402,6 +510,72 @@ if ((COMMIT_DATE < TIMESTAMP_BOOTSTRAP_NECESSARY)); then
     LLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS};${LLVM_ENABLE_RUNTIMES}"
     LLVM_ENABLE_RUNTIMES=
     NINJA_TARGET_RUNTIMES=
+fi
+
+# LLVM 4.0 was the version where LLVM_ENABLE_PROJECTS was introduced,
+# In older versions, users were supposed to clone subprojects into the right
+# places, and LLVM's CMakeLists would pick them up if they are present.
+# If they were not, they were silently ignored.
+# 4.0 doesn't need symlinks for anything but libc++abi, 5.0 doens't need them
+# at all. The fact that all subprojects are in the git monorepo seems to be
+# an artifact of SVN to git migration.
+# So, for older version we translate subprojects in LLVM_ENABLE_PROJECTS
+# into symlinks right where old CMakeLists expect them to be.
+if [[ $MAJOR -le 4 ]]; then
+    OIFS=$IFS
+    IFS=";"
+    for p in ${LLVM_ENABLE_PROJECTS}; do
+        case $p in
+        clang)
+            ln -s "${ROOT}/llvm-project/clang" "${ROOT}/llvm-project/llvm/tools/clang"
+            ;;
+        clang-tools-extra)
+            ln -s "${ROOT}/llvm-project/clang-tools-extra" "${ROOT}/llvm-project/clang/tools/extra"
+            ;;
+        compiler-rt)
+            ln -s "${ROOT}/llvm-project/compiler-rt" "${ROOT}/llvm-project/llvm/projects/compiler-rt"
+            ;;
+        libcxx)
+            if [[ ($MAJOR -eq 3 && $MINOR -ge 4) || $MAJOR -eq 4 ]]; then
+                ln -s "${ROOT}/llvm-project/libcxx" "${ROOT}/llvm-project/llvm/projects/libcxx"
+            fi
+            if [[ $MAJOR -eq 3 && $MINOR -eq 3 ]]; then
+                rm -rf "${ROOT}/llvm-project/clang/runtime/libcxx"
+                ln -s "${ROOT}/llvm-project/libcxx" "${ROOT}/llvm-project/clang/runtime/libcxx"
+            fi
+            # Skip libc++ 3.2. It requires a lot of backported patches to build
+            # it, run tests, and make `-stdlib=libc++` work without linker
+            # complaining about libsupc++ symbols.
+            ;;
+        libcxxabi)
+            if [[ ($MAJOR -eq 3 && $MINOR -ge 5) || $MAJOR -eq 4 ]]; then
+                ln -s "${ROOT}/llvm-project/libcxxabi" "${ROOT}/llvm-project/llvm/projects/libcxxabi"
+            fi
+            ;;
+        libunwind)
+            ln -s "${ROOT}/llvm-project/libunwind" "${ROOT}/llvm-project/llvm/projects/libunwind"
+            ;;
+        lld)
+            ln -s "${ROOT}/llvm-project/lld" "${ROOT}/llvm-project/llvm/tools/lld"
+            ;;
+        polly)
+            # Polly in LLVM 3.7 and on has libisl 0.15 checked out into the repository.
+            # Before that, Polly relied on `find_package(Isl REQUIRED)`,
+            # where `FindIsl.cmake` is provided by Polly.
+            # It searches for the library in the host system.
+            # Ubuntu 16.04 has libisl-dev 0.16 in the repositories,
+            # but it seems to be too new, because build fails.
+            # So we keep Polly disabled until 3.7.
+            if [[ ($MAJOR -eq 3 && $MINOR -ge 7) || $MAJOR -eq 4 ]]; then
+              ln -s "${ROOT}/llvm-project/polly" "${ROOT}/llvm-project/llvm/tools/polly"
+            fi
+            ;;
+        *)
+            # openmp: CMake files of those old versions of LLVM doesn't seem to be aware of OpenMP runtime
+            ;;
+        esac
+    done
+    IFS=$OIFS
 fi
 
 if [[ -n "${SPIRV_LLVM_TRANSLATOR_URL}" ]]; then
@@ -419,6 +593,9 @@ df -h /
 # Setup build directory and build configuration
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
+if [[ $GCC_VERSION == "4."* ]]; then
+   export LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:${LIBRARY_PATH}"
+fi
 cmake \
     -G "Ninja" "${ROOT}/llvm-project/llvm" \
     -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
@@ -437,8 +614,64 @@ ninja ${NINJA_TARGET} "${NINJA_EXTRA_TARGETS[@]}"
 if [[ -n "${NINJA_TARGET_RUNTIMES}" ]]; then
     ninja "${NINJA_TARGET_RUNTIMES}"
 fi
-if [[ -n "${NINJA_EXTRA_TARGETS_NO_FAIL}" ]]; then
-    ninja -k0 "${NINJA_EXTRA_TARGETS_NO_FAIL[@]}" || true
+
+# We can't simply throw all test targets into a single ninja invocation,
+# because it was observed that sometimes failing tests can prevent other tests
+# from running even with '-k0' specified.
+for TARGET in "${NINJA_EXTRA_TARGETS_NO_FAIL[@]}"; do
+    # Starting with 3.2, python processes spawned by lit are trying to close 
+    # the full range of possible file descriptors before exiting. On machines
+    # with raised limit of open file descriptors, this can take minutes per
+    # each of thousands of tests. One scenario is a dev machine where
+    # 'fs.inotify.max_user_watches' was raised per Visual Studio Code request.
+    # So we need to make sure that tests are run with a rather low limit.
+    # See https://github.com/python/cpython/issues/127177 for details.
+    prlimit --nofile=1024:524288 ninja -k0 "${TARGET}" || true
+done
+
+if [[ $MAJOR -le 3 ]]; then
+    # It's very much worth testing that ancient versions of Clang are capable
+    # of compiling C++ "Hello, world!", especially in `-stdlib=libc++` mode.
+    # Use `-gcc-toolchain`, `-Wl,-rpath`, and `LD_LIBRARY_PATH` to do a rough
+    # emulation of what's happening in production.
+    export LD_LIBRARY_PATH=${ROOT}/staging/lib
+    echo -e "#include <iostream>\n int main() { std::cout << \"Hello, world!\" << std::endl; }" > ${ROOT}/hello.cpp
+    if [[ $MAJOR -eq 3 && $MINOR -ge 3 ]]; then
+        ${ROOT}/staging/bin/clang++ \
+            -gcc-toolchain /opt/compiler-explorer/gcc-${GCC_VERSION} \
+            -Wl,-rpath=/opt/compiler-explorer/gcc-${GCC_VERSION}/lib64 \
+            -stdlib=libc++ \
+            -o ${ROOT}/hello_libcxx \
+            ${ROOT}/hello.cpp && \
+        ${ROOT}/hello_libcxx && \
+        rm ${ROOT}/hello_libcxx || true
+    fi
+    if [[ $MAJOR -eq 3 && $MINOR -ge 1 ]]; then
+        ${ROOT}/staging/bin/clang++ \
+            -gcc-toolchain /opt/compiler-explorer/gcc-${GCC_VERSION} \
+            -Wl,-rpath=/opt/compiler-explorer/gcc-${GCC_VERSION}/lib64 \
+            -o ${ROOT}/hello \
+            ${ROOT}/hello.cpp && \
+        ${ROOT}/hello && \
+        rm ${ROOT}/hello || true
+    fi
+    if [[ ($MAJOR -eq 3 && $MINOR -eq 0) || ($MAJOR -eq 2 && $MINOR -eq 8) ]]; then
+        ${ROOT}/staging/bin/clang++ \
+            -I/opt/compiler-explorer/gcc-${GCC_VERSION}/include/c++/${GCC_VERSION} \
+            -I/opt/compiler-explorer/gcc-${GCC_VERSION}/include/c++/${GCC_VERSION}/x86_64-linux-gnu/ \
+            -I/opt/compiler-explorer/gcc-${GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${GCC_VERSION}/include \
+            -Wl,-rpath=/opt/compiler-explorer/gcc-${GCC_VERSION}/lib64 \
+            -o ${ROOT}/hello \
+            ${ROOT}/hello.cpp && \
+        ${ROOT}/hello && \
+        rm ${ROOT}/hello || true
+    fi
+    rm ${ROOT}/hello.cpp
+    unset LD_LIBRARY_PATH
+    # Clang 2.9 can't find GCC, so it passes crtbegin.o and friends to ld using
+    # relative paths, which is not supported.
+    # Clang 2.7 can't compile hello world (even C one) because of codegen bugs.
+    # Clang 2.6 didn't officially support C++ at all.
 fi
 
 # Don't try to compress the binaries as they don't like it

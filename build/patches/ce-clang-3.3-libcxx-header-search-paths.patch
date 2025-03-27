@@ -1,0 +1,91 @@
+This is 5a3d898758ed87f5d58e92d3ecdb75b567b059d6
+"Make the Linux support for finding libc++ somewhat less braindead.",
+backported to 3.3
+
+diff --git a/clang/lib/Driver/ToolChains.cpp b/clang/lib/Driver/ToolChains.cpp
+index fffba0e4e50f..87a5a9c99794 100644
+--- a/clang/lib/Driver/ToolChains.cpp
++++ b/clang/lib/Driver/ToolChains.cpp
+@@ -2555,9 +2555,24 @@ void Linux::AddClangCXXStdlibIncludeArgs(const ArgList &DriverArgs,
+
+   // Check if libc++ has been enabled and provide its include paths if so.
+   if (GetCXXStdlibType(DriverArgs) == ToolChain::CST_Libcxx) {
+-    // libc++ is always installed at a fixed path on Linux currently.
+-    addSystemInclude(DriverArgs, CC1Args,
+-                     getDriver().SysRoot + "/usr/include/c++/v1");
++    const std::string LibCXXIncludePathCandidates[] = {
++      // The primary location is within the Clang installation.
++      // FIXME: We shouldn't hard code 'v1' here to make Clang future proof to
++      // newer ABI versions.
++      getDriver().Dir + "/../include/c++/v1",
++
++      // We also check the system as for a long time this is the only place Clang looked.
++      // FIXME: We should really remove this. It doesn't make any sense.
++      getDriver().SysRoot + "/usr/include/c++/v1"
++    };
++    for (unsigned i = 0; i < llvm::array_lengthof(LibCXXIncludePathCandidates);
++         ++i) {
++      if (!llvm::sys::fs::exists(LibCXXIncludePathCandidates[i]))
++        continue;
++      // Add the first candidate that exists.
++      addSystemInclude(DriverArgs, CC1Args, LibCXXIncludePathCandidates[i]);
++      break;
++    }
+     return;
+   }
+
+@@ -2581,7 +2596,7 @@ void Linux::AddClangCXXStdlibIncludeArgs(const ArgList &DriverArgs,
+                                DriverArgs, CC1Args))
+     return;
+
+-  const std::string IncludePathCandidates[] = {
++  const std::string LibStdCXXIncludePathCandidates[] = {
+     // Gentoo is weird and places its headers inside the GCC install, so if the
+     // first attempt to find the headers fails, try this pattern.
+     InstallDir.str() + "/include/g++-v4",
+@@ -2592,8 +2607,8 @@ void Linux::AddClangCXXStdlibIncludeArgs(const ArgList &DriverArgs,
+     LibDir.str() + "/../include/c++",
+   };
+
+-  for (unsigned i = 0; i < llvm::array_lengthof(IncludePathCandidates); ++i) {
+-    if (addLibStdCXXIncludePaths(IncludePathCandidates[i], (TripleStr +
++  for (unsigned i = 0; i < llvm::array_lengthof(LibStdCXXIncludePathCandidates); ++i) {
++    if (addLibStdCXXIncludePaths(LibStdCXXIncludePathCandidates[i], (TripleStr +
+                 GCCInstallation.getMultiarchSuffix()),
+             DriverArgs, CC1Args))
+       break;
+diff --git a/clang/test/Driver/linux-header-search.cpp b/clang/test/Driver/linux-header-search.cpp
+index d09f5b27ae9d..57e245baa3d8 100644
+--- a/clang/test/Driver/linux-header-search.cpp
++++ b/clang/test/Driver/linux-header-search.cpp
+@@ -1,6 +1,29 @@
+ // General tests that the header search paths detected by the driver and passed
+ // to CC1 are sane.
+ //
++// Test a simulated installation of libc++ on Linux, both through sysroot and
++// the installation path of Clang.
++// RUN: %clang -no-canonical-prefixes %s -### -fsyntax-only 2>&1 \
++// RUN:     -target x86_64-unknown-linux-gnu \
++// RUN:     -stdlib=libc++ \
++// RUN:     -ccc-install-dir %S/Inputs/basic_linux_tree/usr/bin \
++// RUN:     --sysroot=%S/Inputs/basic_linux_libcxx_tree \
++// RUN:   | FileCheck --check-prefix=CHECK-BASIC-LIBCXX-SYSROOT %s
++// CHECK-BASIC-LIBCXX-SYSROOT: "{{[^"]*}}clang{{[^"]*}}" "-cc1"
++// CHECK-BASIC-LIBCXX-SYSROOT: "-isysroot" "[[SYSROOT:[^"]+]]"
++// CHECK-BASIC-LIBCXX-SYSROOT: "-internal-isystem" "[[SYSROOT]]/usr/include/c++/v1"
++// CHECK-BASIC-LIBCXX-SYSROOT: "-internal-isystem" "[[SYSROOT]]/usr/local/include"
++// RUN: %clang -no-canonical-prefixes %s -### -fsyntax-only 2>&1 \
++// RUN:     -target x86_64-unknown-linux-gnu \
++// RUN:     -stdlib=libc++ \
++// RUN:     -ccc-install-dir %S/Inputs/basic_linux_libcxx_tree/usr/bin \
++// RUN:     --sysroot=%S/Inputs/basic_linux_libcxx_tree \
++// RUN:   | FileCheck --check-prefix=CHECK-BASIC-LIBCXX-INSTALL %s
++// CHECK-BASIC-LIBCXX-INSTALL: "{{[^"]*}}clang{{[^"]*}}" "-cc1"
++// CHECK-BASIC-LIBCXX-INSTALL: "-isysroot" "[[SYSROOT:[^"]+]]"
++// CHECK-BASIC-LIBCXX-INSTALL: "-internal-isystem" "[[SYSROOT]]/usr/bin/../include/c++/v1"
++// CHECK-BASIC-LIBCXX-INSTALL: "-internal-isystem" "[[SYSROOT]]/usr/local/include"
++//
+ // Test a very broken version of multiarch that shipped in Ubuntu 11.04.
+ // RUN: %clang -no-canonical-prefixes %s -### -fsyntax-only 2>&1 \
+ // RUN:     -target i386-unknown-linux \
+ 

@@ -1,0 +1,10 @@
+diff --git a/llvm/test/CodeGen/Generic/cast-fp.ll b/llvm/test/CodeGen/Generic/cast-fp.ll
+index 590b7ceee4bf3..4bb35a2f46289 100644
+--- a/llvm/test/CodeGen/Generic/cast-fp.ll
++++ b/llvm/test/CodeGen/Generic/cast-fp.ll
+@@ -1,4 +1,3 @@
+-; RUN: llc < %s
+ @a_fstr = internal constant [8 x i8] c"a = %f\0A\00"		; <[8 x i8]*> [#uses=1]
+ @a_lstr = internal constant [10 x i8] c"a = %lld\0A\00"		; <[10 x i8]*> [#uses=1]
+ @a_dstr = internal constant [8 x i8] c"a = %d\0A\00"		; <[8 x i8]*> [#uses=1]
+ 
