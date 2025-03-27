@@ -15,6 +15,9 @@ jobs:
           # Some older clangs (<10) needs to be an older glibc, as comes with 18.04 in order to build 9.* and earlier.
           # otherwise we somehow need to apply 947f9692440836dcb8d88b74b69dd379d85974ce to get the sanitizer
           # to build.
+        - image: 16.04
+          suffix: -16.4
+          # Ancient Clang builds (2.6-4.0) assume 16.04 environment. 
     steps:
     - name: Docker Setup Buildx
       uses: docker/setup-buildx-action@v3
