@@ -1,0 +1,19 @@
+Clang 2.7 was caught between removal of the old clang-cc driver
+(3c6d1b52a09a6a94384b27840d64451d4fa292f3), and proper implementation of
+`-mllvm` that passes arguments to backend
+(76fa840d0990314d1d1c160803ba9d014a6c01a9). There appears to be no way to pass
+`-x86-asm-syntax` to the backend, so we're forced to change the default.
+
+diff --git a/llvm/lib/Target/X86/X86MCAsmInfo.cpp b/llvm/lib/Target/X86/X86MCAsmInfo.cpp
+index ded9717..b828945 100644
+--- a/llvm/lib/Target/X86/X86MCAsmInfo.cpp
++++ b/llvm/lib/Target/X86/X86MCAsmInfo.cpp
+@@ -25,7 +25,7 @@ enum AsmWriterFlavorTy {
+ };
+ 
+ static cl::opt<AsmWriterFlavorTy>
+-AsmWriterFlavor("x86-asm-syntax", cl::init(ATT),
++AsmWriterFlavor("x86-asm-syntax", cl::init(Intel),
+   cl::desc("Choose style of code to emit from X86 backend:"),
+   cl::values(clEnumValN(ATT,   "att",   "Emit AT&T-style assembly"),
+              clEnumValN(Intel, "intel", "Emit Intel-style assembly"),
