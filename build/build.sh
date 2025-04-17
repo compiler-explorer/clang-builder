@@ -427,7 +427,8 @@ mlir-*)
         
         if [[ $MAJOR -eq 2 && $MINOR -eq 8 ]]; then
             GCC_VERSION=4.5.3
-            COMMITS_TO_CHERRYPICK+=("95b6f045f1f104b96d443c404755c2757b6f6cf7") # fix for clang++ symlink being absolute
+            COMMITS_TO_CHERRYPICK+=("95b6f045f1f104b96d443c404755c2757b6f6cf7") # prerequisite for symlink fix below
+            COMMITS_TO_CHERRYPICK+=("16d73f92161ae43828fd6dfaa3bb887058352bcb") # fix for clang++ symlink being absolute
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-llvm-2.8-disable-cast-fp-test.patch") # cast-fp.ll takes 98 GB of RAM and 4 minutes to fail
             NINJA_EXTRA_TARGETS_NO_FAIL+=("check" "clang-test")
         fi
