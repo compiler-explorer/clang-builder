@@ -172,6 +172,12 @@ p3412-trunk)
     VERSION=p3412-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+implicit-constexpr-trunk)
+    BRANCH=feature/implicit-constexpr-flag
+    URL=https://github.com/hanickadot/llvm-project.git
+    VERSION=implicit-constexpr-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 dascandy-contracts-trunk)
     BRANCH=add-contracts
     URL=https://github.com/dascandy/llvm-project
