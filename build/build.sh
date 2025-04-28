@@ -18,6 +18,7 @@ NINJA_TARGET_RUNTIMES=install-runtimes
 TAG=
 declare -a COMMITS_TO_CHERRYPICK
 declare -a PATCHES_TO_APPLY
+declare -a COMMITS_TO_CHERRYPICK_AFTER_PATCHES
 
 case $VERSION in
 ce-trunk)
@@ -441,8 +442,9 @@ mlir-*)
 
         if [[ $MAJOR -eq 2 && $MINOR -eq 7 ]]; then
             GCC_VERSION=4.4.7
-            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-clang-2.7-clang-symlink.patch")
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-clang-2.7-clang-symlink-prerequisite.patch")
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-clang-2.7-default-to-intel-asm-syntax.patch")
+            COMMITS_TO_CHERRYPICK_AFTER_PATCHES+=("16d73f92161ae43828fd6dfaa3bb887058352bcb") # fix for clang++ symlink being absolute
             # Not adding LLVM tests ("check" target), because they expect AT&T syntax.
             NINJA_EXTRA_TARGETS_NO_FAIL+=("clang-test")
         fi
@@ -507,6 +509,13 @@ done
 
 for PATCH_TO_APPLY in "${PATCHES_TO_APPLY[@]}"; do
     git -C "${ROOT}/llvm-project" apply "${PATCH_TO_APPLY}" -v
+done
+
+for COMMIT_TO_CHERRYPICK in "${COMMITS_TO_CHERRYPICK_AFTER_PATCHES[@]}"; do
+    # It was found out that --depth=1 is not enough sometimes,
+    # so fetching with --depth=10 to ensure that cherry-pick succeeds.
+    git -C "${ROOT}/llvm-project" fetch --depth=10 origin "${COMMIT_TO_CHERRYPICK}" -v
+    git -C "${ROOT}/llvm-project" cherry-pick -n "${COMMIT_TO_CHERRYPICK}" -v
 done
 
 # For older LLVM versions, merge runtime and projects
