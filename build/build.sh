@@ -104,6 +104,7 @@ relocatable-trunk)
     VERSION=relocatable-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_PROJECTS="clang"
     LLVM_ENABLE_RUNTIMES="compiler-rt;libcxx;libcxxabi;libunwind"
+    CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON" "-DLLVM_TARGETS_TO_BUILD=AArch64;ARM;X86")
     ;;
 patmat-trunk)
     BRANCH=p2688-pattern-matching
