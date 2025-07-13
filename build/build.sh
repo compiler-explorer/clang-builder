@@ -168,6 +168,12 @@ p3372-trunk)
     VERSION=p3372-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3385-trunk)
+    BRANCH=3385R5
+    URL=https://github.com/zebullax/clang-p2996/
+    VERSION=p3385-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 p3412-trunk)
     BRANCH=f-literals
     URL=https://github.com/BengtGustafsson/llvm-project-UTP.git
