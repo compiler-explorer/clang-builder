@@ -1,15 +1,15 @@
-commit 445c6dd4845daf2fbc5e8e8b9bac6a39cd90a470
-Author: partouf <partouf@gmail.com>
-Date:   Sat Dec 10 14:07:08 2022 +0100
+commit 4176676a47461bb5176ec066b5b1b8d08b60b7f7
+Author: Matt Godbolt <matt@godbolt.org>
+Date:   Mon Aug 4 08:51:48 2025 -0500
 
     change dbgs() in case of --debug-to-stdout
 
 diff --git a/llvm/lib/Support/Debug.cpp b/llvm/lib/Support/Debug.cpp
-index 98a9ac4722b5..a04aabe67627 100644
+index b6f338f903a9..b2e23b2e076b 100644
 --- a/llvm/lib/Support/Debug.cpp
 +++ b/llvm/lib/Support/Debug.cpp
-@@ -78,6 +78,11 @@ void setCurrentDebugTypes(const char **Types, unsigned Count) {
- }
+@@ -117,6 +117,11 @@ void setCurrentDebugTypes(const char **Types, unsigned Count) {
+ 
  } // namespace llvm
  
 +cl::opt<bool> LogDebugToStdOut(
@@ -20,7 +20,7 @@ index 98a9ac4722b5..a04aabe67627 100644
  // All Debug.h functionality is a no-op in NDEBUG mode.
  #ifndef NDEBUG
  
-@@ -161,23 +166,27 @@ static void debug_user_sig_handler(void *Cookie) {
+@@ -205,23 +210,27 @@ static void debug_user_sig_handler(void *Cookie) {
  
  /// dbgs - Return a circular-buffered debug stream.
  raw_ostream &llvm::dbgs() {
@@ -65,7 +65,7 @@ index 98a9ac4722b5..a04aabe67627 100644
  }
  
  #else
-@@ -185,7 +194,11 @@ raw_ostream &llvm::dbgs() {
+@@ -229,7 +238,11 @@ raw_ostream &llvm::dbgs() {
  namespace llvm {
    /// dbgs - Return errs().
    raw_ostream &dbgs() {
