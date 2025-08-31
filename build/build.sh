@@ -180,6 +180,12 @@ p3412-trunk)
     VERSION=p3412-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3776-trunk)
+    BRANCH=P3776-More-Trailing-Commas
+    URL=https://github.com/term-est/llvm-project
+    VERSION=p3776-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 implicit-constexpr-trunk)
     BRANCH=feature/implicit-constexpr-flag
     URL=https://github.com/hanickadot/llvm-project.git
