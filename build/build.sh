@@ -357,6 +357,9 @@ mlir-*)
         elif [[ $MAJOR -eq 12 ]]; then
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-12.patch")
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
+        elif [[ $MAJOR -le 21 ]]; then
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-13.patch")
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68K;WebAssembly"
         else
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"

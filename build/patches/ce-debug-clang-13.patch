@@ -1,0 +1,80 @@
+commit 445c6dd4845daf2fbc5e8e8b9bac6a39cd90a470
+Author: partouf <partouf@gmail.com>
+Date:   Sat Dec 10 14:07:08 2022 +0100
+
+    change dbgs() in case of --debug-to-stdout
+
+diff --git a/llvm/lib/Support/Debug.cpp b/llvm/lib/Support/Debug.cpp
+index 98a9ac4722b5..a04aabe67627 100644
+--- a/llvm/lib/Support/Debug.cpp
++++ b/llvm/lib/Support/Debug.cpp
+@@ -78,6 +78,11 @@ void setCurrentDebugTypes(const char **Types, unsigned Count) {
+ }
+ } // namespace llvm
+ 
++cl::opt<bool> LogDebugToStdOut(
++    "debug-to-stdout",
++    llvm::cl::desc("Log debugging to stdout instead of stderr"),
++    cl::init(false), cl::Hidden);
++
+ // All Debug.h functionality is a no-op in NDEBUG mode.
+ #ifndef NDEBUG
+ 
+@@ -161,23 +166,27 @@ static void debug_user_sig_handler(void *Cookie) {
+ 
+ /// dbgs - Return a circular-buffered debug stream.
+ raw_ostream &llvm::dbgs() {
+-  // Do one-time initialization in a thread-safe way.
+-  static struct dbgstream {
+-    circular_raw_ostream strm;
+-
+-    dbgstream()
+-        : strm(errs(), "*** Debug Log Output ***\n",
+-               (!EnableDebugBuffering || !DebugFlag) ? 0 : *DebugBufferSize) {
+-      if (EnableDebugBuffering && DebugFlag && *DebugBufferSize != 0)
+-        // TODO: Add a handler for SIGUSER1-type signals so the user can
+-        // force a debug dump.
+-        sys::AddSignalHandler(&debug_user_sig_handler, nullptr);
+-      // Otherwise we've already set the debug stream buffer size to
+-      // zero, disabling buffering so it will output directly to errs().
+-    }
+-  } thestrm;
+-
+-  return thestrm.strm;
++  if (LogDebugToStdOut) {
++    return outs();
++  } else {
++    // Do one-time initialization in a thread-safe way.
++    static struct dbgstream {
++      circular_raw_ostream strm;
++
++      dbgstream()
++          : strm(errs(), "*** Debug Log Output ***\n",
++                 (!EnableDebugBuffering || !DebugFlag) ? 0 : *DebugBufferSize) {
++        if (EnableDebugBuffering && DebugFlag && *DebugBufferSize != 0)
++          // TODO: Add a handler for SIGUSER1-type signals so the user can
++          // force a debug dump.
++          sys::AddSignalHandler(&debug_user_sig_handler, nullptr);
++        // Otherwise we've already set the debug stream buffer size to
++        // zero, disabling buffering so it will output directly to errs().
++      }
++    } thestrm;
++
++    return thestrm.strm;
++  }
+ }
+ 
+ #else
+@@ -185,7 +194,11 @@ raw_ostream &llvm::dbgs() {
+ namespace llvm {
+   /// dbgs - Return errs().
+   raw_ostream &dbgs() {
+-    return errs();
++    if (LogDebugToStdOut) {
++      return outs();
++    } else {
++      return errs();
++    }
+   }
+ }
+ void llvm::initDebugOptions() {}
