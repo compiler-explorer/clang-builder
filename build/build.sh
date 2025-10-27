@@ -156,6 +156,12 @@ p3309-trunk)
     VERSION=p3309-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3334-trunk)
+    BRANCH=p3334-cross-static
+    URL=https://github.com/tal-yac/llvm-project
+    VERSION=p3334-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 p3367-trunk)
     BRANCH=P3367-constexpr-coroutines
     URL=https://github.com/hanickadot/llvm-project
