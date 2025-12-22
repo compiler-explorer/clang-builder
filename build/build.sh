@@ -202,7 +202,7 @@ hana-clang-trunk)
     BRANCH=compiler-explorer/hana-clang
     URL=https://github.com/hanickadot/llvm-project
     VERSION=hana-clang-$(date +%Y%m%d)
-    LLVM_ENABLE_RUNTIMES+=";compiler-rt;libcxx;libcxxabi;libunwind"
+    LLVM_ENABLE_RUNTIMES+=";compiler-rt;libunwind"
     CMAKE_EXTRA_ARGS+=( "-DCLANG_DEFAULT_CXX_STDLIB=libc++" "-DLLVM_ENABLE_ASSERTIONS=ON" )
     ;;
 implicit-constexpr-trunk)
