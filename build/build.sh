@@ -198,6 +198,13 @@ p3776-trunk)
     VERSION=p3776-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+hana-clang-trunk)
+    BRANCH=compiler-explorer/hana-clang
+    URL=https://github.com/hanickadot/llvm-project
+    VERSION=hana-clang-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+="compiler-rt;libcxx;libcxxabi;libunwind"
+    CMAKE_EXTRA_ARGS+=( "-DCLANG_DEFAULT_CXX_STDLIB=libc++" "-DLLVM_ENABLE_ASSERTIONS=ON" )
+    ;;
 implicit-constexpr-trunk)
     BRANCH=feature/implicit-constexpr-flag
     URL=https://github.com/hanickadot/llvm-project.git
