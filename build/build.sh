@@ -198,6 +198,12 @@ p3776-trunk)
     VERSION=p3776-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3951-trunk)
+    BRANCH=template-strings
+    URL=https://github.com/brevzin/llvm-project
+    VERSION=p3951-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 hana-clang-trunk)
     BRANCH=compiler-explorer/hana-clang
     URL=https://github.com/hanickadot/llvm-project
@@ -467,7 +473,7 @@ mlir-*)
             GCC_VERSION=4.5.3
             NINJA_EXTRA_TARGETS_NO_FAIL+=("check" "clang-test")
         fi
-        
+
         if [[ $MAJOR -eq 2 && $MINOR -eq 8 ]]; then
             GCC_VERSION=4.5.3
             COMMITS_TO_CHERRYPICK+=("95b6f045f1f104b96d443c404755c2757b6f6cf7") # prerequisite for symlink fix below
@@ -491,7 +497,7 @@ mlir-*)
             # Not adding LLVM tests ("check" target), because they are not available via CMake.
             NINJA_EXTRA_TARGETS_NO_FAIL+=("clang-test")
         fi
-        ;; 
+        ;;
     esac
     ;;
 esac
@@ -671,7 +677,7 @@ fi
 # because it was observed that sometimes failing tests can prevent other tests
 # from running even with '-k0' specified.
 for TARGET in "${NINJA_EXTRA_TARGETS_NO_FAIL[@]}"; do
-    # Starting with 3.2, python processes spawned by lit are trying to close 
+    # Starting with 3.2, python processes spawned by lit are trying to close
     # the full range of possible file descriptors before exiting. On machines
     # with raised limit of open file descriptors, this can take minutes per
     # each of thousands of tests. One scenario is a dev machine where
