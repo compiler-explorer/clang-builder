@@ -150,6 +150,12 @@ p2998-trunk)
     VERSION=p2998-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3039-trunk)
+    BRANCH=p3039experimental
+    URL=https://github.com/Imagix/llvm-project-p3039
+    VERSION=p3039-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 p3068-trunk)
     BRANCH=P3068-constexpr-exceptions
     URL=https://github.com/hanickadot/llvm-project
