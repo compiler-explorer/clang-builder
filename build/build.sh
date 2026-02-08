@@ -98,6 +98,19 @@ llvmflang-trunk)
     # See https://github.com/compiler-explorer/clang-builder/issues/27
     CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_STANDARD=17" "-DLLVM_PARALLEL_COMPILE_JOBS=12")
     ;;
+llvmflang-*)
+    # Release versions of LLVM flang (13+).
+    BASENAME=llvmflang
+    GCC_VERSION=9.4.0
+    LLVM_ENABLE_PROJECTS="mlir;flang;clang"
+    LLVM_ENABLE_RUNTIMES=""
+    NINJA_TARGET_RUNTIMES=
+    CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_STANDARD=17" "-DLLVM_PARALLEL_COMPILE_JOBS=12")
+
+    VERSION=${VERSION#llvmflang-}
+    TAG=llvmorg-${VERSION}
+    URL=https://github.com/llvm/llvm-project.git
+    ;;
 relocatable-trunk)
     BRANCH=trivially-relocatable
     URL=https://github.com/Quuxplusone/llvm-project.git
