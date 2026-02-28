@@ -270,6 +270,7 @@ swiftlang-trunk)
     BRANCH=next
     URL=https://github.com/swiftlang/llvm-project
     VERSION=swiftlang-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 rocm-*)
     if [[ "${VERSION#rocm-}" == "trunk" ]]; then
