@@ -229,6 +229,13 @@ p3951-trunk)
     VERSION=p3951-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+barry-clang-trunk)
+    BRANCH=compiler-explorer/barry
+    URL=https://github.com/brevzin/llvm-project
+    VERSION=barry-clang-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";compiler-rt;libunwind"
+    CMAKE_EXTRA_ARGS+=( "-DCLANG_DEFAULT_CXX_STDLIB=libc++" "-DLLVM_ENABLE_ASSERTIONS=ON" )
+    ;;
 hana-clang-trunk)
     BRANCH=compiler-explorer/hana-clang
     URL=https://github.com/hanickadot/llvm-project
