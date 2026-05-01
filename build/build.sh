@@ -66,6 +66,11 @@ dang-main)
     URL=https://github.com/ThePhD/llvm-project.git
     VERSION=dang-main-$(date +%Y%m%d)
     ;;
+thephd.dev)
+    BRANCH=thephd.dev
+    URL=https://github.com/ThePhD/llvm-project.git
+    VERSION=thephd.dev-$(date +%Y%m%d)
+    ;;
 widberg-main)
     BRANCH=main
     URL=https://github.com/widberg/llvm-project-widberg-extensions.git
