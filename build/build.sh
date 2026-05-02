@@ -70,6 +70,8 @@ thephd.dev)
     BRANCH=thephd.dev
     URL=https://github.com/ThePhD/llvm-project.git
     VERSION=thephd.dev-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";compiler-rt;libunwind"
+    CMAKE_EXTRA_ARGS+=( "-DCLANG_DEFAULT_CXX_STDLIB=libc++" "-DLLVM_ENABLE_ASSERTIONS=ON" )
     ;;
 widberg-main)
     BRANCH=main
