@@ -5,10 +5,9 @@ Date:   Mon Aug 4 08:51:48 2025 -0500
     change dbgs() in case of --debug-to-stdout
 
 diff --git a/llvm/lib/Support/Debug.cpp b/llvm/lib/Support/Debug.cpp
-index b6f338f903a9..b2e23b2e076b 100644
 --- a/llvm/lib/Support/Debug.cpp
 +++ b/llvm/lib/Support/Debug.cpp
-@@ -117,6 +117,11 @@ void setCurrentDebugTypes(const char **Types, unsigned Count) {
+@@ -117,6 +117,11 @@
  
  } // namespace llvm
  
@@ -20,7 +19,7 @@ index b6f338f903a9..b2e23b2e076b 100644
  // All Debug.h functionality is a no-op in NDEBUG mode.
  #ifndef NDEBUG
  
-@@ -205,23 +210,27 @@ static void debug_user_sig_handler(void *Cookie) {
+@@ -207,23 +212,27 @@
  
  /// dbgs - Return a circular-buffered debug stream.
  raw_ostream &llvm::dbgs() {
@@ -64,8 +63,8 @@ index b6f338f903a9..b2e23b2e076b 100644
 +  }
  }
  
- #else
-@@ -229,7 +238,11 @@ raw_ostream &llvm::dbgs() {
+ void llvm::printDebugLog() {
+@@ -236,7 +245,11 @@
  namespace llvm {
    /// dbgs - Return errs().
    raw_ostream &dbgs() {
