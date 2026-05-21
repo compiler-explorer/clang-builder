@@ -373,6 +373,7 @@ mlir-*)
         BRANCH=main
         VERSION=trunk-$(date +%Y%m%d)
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
+        PATCHES_TO_APPLY+=("${ROOT}/patches/ce-dxcontainer-gcc-name-conflict.patch") # TODO: remove when llvm#198222 is fixed upstream
         LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;M68k"
         CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On" "-DLIBCXX_INSTALL_MODULES=ON")
         LLVM_ENABLE_RUNTIMES+=";libunwind"
@@ -381,6 +382,7 @@ mlir-*)
         BRANCH=main
         VERSION=trunk-aarch64-$(date +%Y%m%d)
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
+        PATCHES_TO_APPLY+=("${ROOT}/patches/ce-dxcontainer-gcc-name-conflict.patch") # TODO: remove when llvm#198222 is fixed upstream
         LLVM_EXPERIMENTAL_TARGETS_TO_BUILD=""
         CMAKE_EXTRA_ARGS+=("-DLIBCXX_INSTALL_MODULES=ON -DLLVM_TARGETS_TO_BUILD=AArch64")
         LLVM_ENABLE_RUNTIMES+=";libunwind"
@@ -392,6 +394,7 @@ mlir-*)
         CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON" "-DCLANG_ENABLE_HLSL=On" "-DLIBCXX_INSTALL_MODULES=ON")
         LLVM_ENABLE_RUNTIMES+=";libunwind"
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
+        PATCHES_TO_APPLY+=("${ROOT}/patches/ce-dxcontainer-gcc-name-conflict.patch") # TODO: remove when llvm#198222 is fixed upstream
         ;;
     *)
         # Handle assertions-{VERSION}

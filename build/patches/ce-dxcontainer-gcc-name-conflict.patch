@@ -1,0 +1,11 @@
+--- a/llvm/include/llvm/ObjectYAML/DXContainerYAML.h
++++ b/llvm/include/llvm/ObjectYAML/DXContainerYAML.h
+@@ -325,7 +325,7 @@
+   std::optional<DXContainerYAML::Signature> Signature;
+   std::optional<DXContainerYAML::RootSignatureYamlDesc> RootSignature;
+   std::optional<DXContainerYAML::DebugName> DebugName;
+-  std::optional<CompilerVersion> CompilerVersion;
++  std::optional<struct CompilerVersion> CompilerVersion;
+ };
+ 
+ struct Object {
