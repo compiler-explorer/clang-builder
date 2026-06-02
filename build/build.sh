@@ -431,6 +431,11 @@ mlir-*)
         elif [[ $MAJOR -le 21 ]]; then
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-13.patch")
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
+        elif [[ $MAJOR -eq 22 ]]; then
+            # 22 rewrote setCurrentDebugTypes() but, unlike trunk, has no
+            # printDebugLog() yet, so it needs its own debug patch context.
+            PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-22.patch")
+            LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
         else
             PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
             LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="M68k;WebAssembly"
