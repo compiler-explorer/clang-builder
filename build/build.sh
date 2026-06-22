@@ -136,7 +136,7 @@ clangir-trunk)
     # Does not compile with 9.2.0.
     GCC_VERSION=14.2.0
     BRANCH=main
-    URL=https://github.com/llvm/clangir.git
+    URL=https://github.com/llvm/llvm-project.git
     VERSION=clangir-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_PROJECTS="clang;mlir"
     LLVM_ENABLE_RUNTIMES="libunwind;libcxx;libcxxabi"
