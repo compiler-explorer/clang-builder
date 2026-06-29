@@ -268,6 +268,12 @@ ericwf-contracts-trunk)
     VERSION=ericwf-contracts-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+notadragon-contracts-p3850)
+    BRANCH=contracts-p3850
+    URL=https://github.com/notadragon/llvm-project
+    VERSION=notadragon-contracts-p3850-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 p1974-trunk)
     BRANCH=godbolt/propconst
     URL=https://github.com/je4d/llvm-project
