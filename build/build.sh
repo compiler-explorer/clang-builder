@@ -273,6 +273,7 @@ notadragon-contracts-p3850)
     URL=https://github.com/notadragon/llvm-project
     VERSION=notadragon-contracts-p3850-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
+    CMAKE_EXTRA_ARGS+=("-DCLANG_DEFAULT_CXX_STDLIB=libc++")
     ;;
 p1974-trunk)
     BRANCH=godbolt/propconst
