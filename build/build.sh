@@ -224,6 +224,12 @@ p3776-trunk)
     VERSION=p3776-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p3817-trunk)
+    BRANCH=p3817
+    URL=https://github.com/regevran/llvm-project-fork
+    VERSION=p3817-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 p3822-trunk)
     BRANCH=users/yuxuanchen1997/p3822r0-requirements-noexcept
     URL=https://github.com/yuxuanchen1997/llvm-project
