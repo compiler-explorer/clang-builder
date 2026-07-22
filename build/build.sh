@@ -309,6 +309,10 @@ rocm-*)
             x=${BASH_REMATCH[1]}
             y=${BASH_REMATCH[2]}
             ROCM_VERSION=$(( x * 100 + y ))
+            if (( ROCM_VERSION >= 714 )); then
+                # ROCm 7.14 and newer are based on TheRock
+                TAG=therock-${x}.${y}
+            fi
         fi
     fi
     if (( ROCM_VERSION < 601 )); then
