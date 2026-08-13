@@ -242,6 +242,18 @@ p3951-trunk)
     VERSION=p3951-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+profiles-init-trunk)
+    BRANCH=profiles-init
+    URL=https://github.com/cppalliance/clang
+    VERSION=profiles-init-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
+profiles-core-ub-trunk)
+    BRANCH=profiles-core-ub
+    URL=https://github.com/cppalliance/clang
+    VERSION=profiles-core-ub-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 barry-clang-trunk)
     BRANCH=compiler-explorer/barry
     URL=https://github.com/brevzin/llvm-project
