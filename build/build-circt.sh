@@ -2,6 +2,9 @@
 
 set -exo pipefail
 
+# shellcheck source=build/common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+
 ROOT=$PWD
 VERSION=$1
 
@@ -82,6 +85,7 @@ cmake \
     -DLLVM_BINUTILS_INCDIR:PATH="/opt/compiler-explorer/gcc-${BINUTILS_GCC_VERSION}/lib/gcc/x86_64-linux-gnu/${BINUTILS_GCC_VERSION}/plugin/include" \
     -DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS_TO_BUILD}" \
     -DLLVM_PARALLEL_LINK_JOBS=4 \
+    -DLLVM_PARALLEL_COMPILE_JOBS="$(compile_jobs_for 3)" \
     ${CMAKE_EXTRA_ARGS}
 
 ninja ${NINJA_TARGET}
@@ -96,6 +100,7 @@ cmake \
     -DLLVM_DIR="${BUILD_DIR}/lib/cmake/llvm" \
     -DLLVM_ENABLE_ASSERTIONS=ON \
     -DCMAKE_BUILD_TYPE=Release \
+    -DLLVM_PARALLEL_COMPILE_JOBS="$(compile_jobs_for 3)" \
     -DCMAKE_INSTALL_PREFIX:PATH="${STAGING_DIR}"
 
 ninja ${NINJA_TARGET}

@@ -2,6 +2,9 @@
 
 set -exo pipefail
 
+# shellcheck source=build/common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+
 ROOT=$PWD
 VERSION=$1
 
@@ -103,7 +106,7 @@ llvmflang-trunk)
     LLVM_ENABLE_RUNTIMES=""
     NINJA_TARGET_RUNTIMES=
     # See https://github.com/compiler-explorer/clang-builder/issues/27
-    CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_STANDARD=17" "-DLLVM_PARALLEL_COMPILE_JOBS=12")
+    CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_STANDARD=17" "-DLLVM_PARALLEL_COMPILE_JOBS=$(compile_jobs_for 7)")
     ;;
 llvmflang-*)
     # Release versions of LLVM flang (13+).
@@ -112,7 +115,7 @@ llvmflang-*)
     LLVM_ENABLE_PROJECTS="mlir;flang;clang"
     LLVM_ENABLE_RUNTIMES=""
     NINJA_TARGET_RUNTIMES=
-    CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_STANDARD=17" "-DLLVM_PARALLEL_COMPILE_JOBS=12")
+    CMAKE_EXTRA_ARGS+=("-DCMAKE_CXX_STANDARD=17" "-DLLVM_PARALLEL_COMPILE_JOBS=$(compile_jobs_for 7)")
 
     VERSION=${VERSION#llvmflang-}
     TAG=llvmorg-${VERSION}
