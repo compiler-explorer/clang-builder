@@ -289,6 +289,12 @@ ericwf-contracts-trunk)
     VERSION=ericwf-contracts-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+cppa-contracts-p4324)
+    BRANCH=p4324
+    URL=https://github.com/cppalliance/clang
+    VERSION=cppa-contracts-p4324-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 notadragon-contracts-p3850)
     BRANCH=contracts-p3850
     URL=https://github.com/notadragon/llvm-project
