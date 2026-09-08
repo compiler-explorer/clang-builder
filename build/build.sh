@@ -412,7 +412,7 @@ mlir-*)
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
         LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;M68k"
         CMAKE_EXTRA_ARGS+=("-DCLANG_ENABLE_HLSL=On" "-DLIBCXX_INSTALL_MODULES=ON")
-        LLVM_ENABLE_RUNTIMES+=";libunwind"
+        LLVM_ENABLE_RUNTIMES+=";libunwind;offload;libsycl"
         ;;
     trunkaarch64)
         BRANCH=main
@@ -427,7 +427,7 @@ mlir-*)
         VERSION=assertions-trunk-$(date +%Y%m%d)
         LLVM_EXPERIMENTAL_TARGETS_TO_BUILD="DirectX;M68k"
         CMAKE_EXTRA_ARGS+=("-DLLVM_ENABLE_ASSERTIONS=ON" "-DCLANG_ENABLE_HLSL=On" "-DLIBCXX_INSTALL_MODULES=ON")
-        LLVM_ENABLE_RUNTIMES+=";libunwind"
+        LLVM_ENABLE_RUNTIMES+=";libunwind;offload;libsycl"
         PATCHES_TO_APPLY+=("${ROOT}/patches/ce-debug-clang-trunk.patch")
         ;;
     *)
