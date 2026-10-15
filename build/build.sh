@@ -167,6 +167,12 @@ bb-p2996-trunk)
     VERSION=bb-p2996-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+expr-reflect-trunk)
+    BRANCH=expr-reflect
+    URL=https://github.com/siqiyyyy/clang-p2996
+    VERSION=expr-reflect-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 p2998-trunk)
     BRANCH=p2998
     URL=https://github.com/Bekenn/llvm-project
