@@ -168,8 +168,8 @@ bb-p2996-trunk)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
 expr-reflect-trunk)
-    BRANCH=expr-reflect
-    URL=https://github.com/siqiyyyy/clang-p2996
+    BRANCH=p4395
+    URL=https://github.com/CppReflectionAD/clang-p4395
     VERSION=expr-reflect-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
