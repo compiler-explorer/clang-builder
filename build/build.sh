@@ -241,6 +241,12 @@ p3951-trunk)
     VERSION=p3951-trunk-$(date +%Y%m%d)
     LLVM_ENABLE_RUNTIMES+=";libunwind"
     ;;
+p4307-p4345-trunk)
+    BRANCH=backticks-and-uniops
+    URL=https://github.com/steve-downey/llvm-project
+    VERSION=p4307-p4345-trunk-$(date +%Y%m%d)
+    LLVM_ENABLE_RUNTIMES+=";libunwind"
+    ;;
 profiles-init-trunk)
     BRANCH=profiles-init
     URL=https://github.com/cppalliance/clang
