@@ -32,7 +32,7 @@ RUN bash -c "if [[ ${image} == 16.04 || ${image} == 18.04 ]]; then apt install -
 
 WORKDIR /root
 
-RUN curl -sL https://github.com/Kitware/CMake/releases/download/v3.26.3/cmake-3.26.3-Linux-x86_64.tar.gz \
+RUN curl -sL https://github.com/Kitware/CMake/releases/download/v3.31.12/cmake-3.31.12-linux-x86_64.tar.gz \
     | tar zxvf - -C /usr --strip-components=1
 
 # Workaround for older clangs that expect xlocale.h
